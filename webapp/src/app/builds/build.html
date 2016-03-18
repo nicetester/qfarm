@@ -1,0 +1,20 @@
+<div class="build-header">
+    {{ repoName }}
+</div>
+<nav>
+    <div class="summary-tab" (click)="showSummary()">
+        Summary
+    </div>
+    <div class="issues-tab" (click)="showIssues()">
+        Issues
+    </div>
+    <div class="files-tab" (click)="showFiles()">
+        Files
+    </div>
+</nav>
+
+<div>
+    <summary-tab *ngIf="tab === 'summary'"></summary-tab>
+    <issues-tab *ngIf="tab === 'issues'"></issues-tab>
+    <files-tab *ngIf="tab === 'files'"></files-tab>
+</div>
