@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/garyburd/redigo/redis"
 	"errors"
+	"github.com/garyburd/redigo/redis"
 )
 
 type Config struct {
@@ -199,7 +199,7 @@ func (s *Service) ListPush(key string, data interface{}) error {
 	if !ok {
 		return fmt.Errorf("can't decode redis response, key: %s", key)
 	}
-	if result < 1  {
+	if result < 1 {
 		return fmt.Errorf("error! redis should add at least one element, result: %d, key: %s", result, key)
 	}
 
@@ -257,6 +257,24 @@ func (s *Service) ListGetLastElements(key string, elems int) ([][]byte, error) {
 	return entries, nil
 }
 
+// ListGetAllElements get all elements from the list.
+func (s *Service) ListGetAllElements(key string) ([][]byte, error) {
+	conn := s.rdb.Get()
+	defer conn.Close()
+
+	entries, err := redis.ByteSlices(conn.Do("LRANGE", key, 0, -1))
+	if err != nil {
+		if err == redis.ErrNil {
+			return nil, ErrNotFound
+		}
+
+		return nil, fmt.Errorf("error while poping data from redis: %v", err)
+	}
+
+	log.Printf("Getting from redis: %s\n", key)
+	return entries, nil
+}
+
 // Subscribe subscribes to redis pubsub topic and run job func when got any notification from topic.
 func (s *Service) Subscribe(topic string, job func(interface{}) error) error {
 	conn := s.rdb.Get()
@@ -296,9 +314,47 @@ func (s *Service) Publish(topic string, data interface{}) error {
 	if !ok {
 		return fmt.Errorf("can't decode redis response, key: %s", topic)
 	}
-	if result < 1  {
+	if result < 1 {
 		return fmt.Errorf("error! redis should publish to at least one subcriber, result: %d, key: %s", result, topic)
 	}
 
 	return nil
+}
+
+// SortedSetRank adds value to sorted set and increasing its rank.
+// Returns new ranking score.
+func (s *Service) SortedSetRank(key string, value string) (int64, error) {
+	conn := s.rdb.Get()
+	defer conn.Close()
+
+	reply, err := conn.Do("ZINCRBY", key, 1, value)
+	if err != nil {
+		return -1, fmt.Errorf("can't increase score of %s, key: %s, err: %v", value, key, err)
+	}
+
+	result, ok := reply.(int64)
+	if !ok {
+		return -1, fmt.Errorf("can't decode redis response, key: %s", key)
+	}
+
+	return result, nil
+}
+
+// SortedSetGetAllRev gets all items from the sorted set in reverse order
+// (from highest to lowest rank).
+func (s *Service) SortedSetGetAllRev(key string) ([][]byte, error) {
+	conn := s.rdb.Get()
+	defer conn.Close()
+
+	entries, err := redis.ByteSlices(conn.Do("ZREVRANGE", key, 0, -1))
+	if err != nil {
+		if err == redis.ErrNil {
+			return nil, ErrNotFound
+		}
+
+		return nil, fmt.Errorf("error while poping data from redis: %v", err)
+	}
+
+	log.Printf("Getting from redis: %s\n", key)
+	return entries, nil
 }
