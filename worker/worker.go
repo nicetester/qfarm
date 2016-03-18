@@ -8,6 +8,7 @@ import (
 
 type Worker struct {
 	redis    *redis.Service
+	notifier *Notifier
 	config   *Cfg
 }
 
@@ -19,6 +20,8 @@ func NewWorker(config *Cfg) (*Worker, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Can't create the redis service: %v\n", err)
 	}
+
+	w.notifier = NewNotifier(w.redis)
 
 	return w, nil
 }
