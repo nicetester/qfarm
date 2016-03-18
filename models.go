@@ -1,6 +1,12 @@
 package qfarm
 
-import "time"
+import (
+	"time"
+	"encoding/json"
+	"fmt"
+"strings"
+	"regexp"
+)
 
 // Build represents single build.
 type Build struct {
@@ -36,3 +42,96 @@ type BuildCfg struct {
 	// Include test files
 	IncludeTests bool `json:"includeTests"`
 }
+
+// CoverageReport holds info about coverage analysis of entire repo.
+type CoverageReport struct {
+	Repo          string          `json:"repo"`
+	TotalCoverage float64         `json:"totalCoverage"`
+	TotalTestsNo  int             `json:"totalTestsNo"`
+	TotalPassedNo int             `json:"totalPassedNo"`
+	TotalFailedNo int             `json:"totalFailedNo"`
+	TotalTime     time.Duration   `json:"totalTime"`
+	Failed        bool            `json:"failed"`
+	Packages      []PackageReport `json:"packages"`
+}
+
+// PackageReport holds info about coverage analysis of specified package.
+type PackageReport struct {
+	Name     string        `json:"name"`
+	Coverage float64       `json:"coverage"`
+	Failed   bool          `json:"failed"`
+	Html     string        `json:"html"`
+	TestsNo  int           `json:"testsNo"`
+	PassedNo int           `json:"passedNo"`
+	FailedNo int           `json:"failedNo"`
+	Time     time.Duration `json:"time"`
+}
+
+// Node represents a node in directory tree. It might be a file or a directory.
+type Node struct {
+	Path     string  `json:"path"`
+	Nodes    []*Node  `json:"nodes"`
+	Parent   *Node   `json:"parent"`
+	Dir      bool    `json:"dir"`
+	Coverage float64 `json:"coverage"`
+	TestsNo  int     `json:"testsNo"`
+	FailedNo int     `json:"failedNo"`
+	PassedNo int     `json:"passedNo"`
+	IssuesNo int     `json:"issuesNo"`
+	ErrorsNo int     `json:"errorsNo"`
+	WarningsNo int   `json:"warningsNo"`
+	Issues   []*Issue `json:"issues"`
+}
+
+// Linter represents linter details. It's used in metalinter.
+type Linter struct {
+	Name             string   `json:"name"`
+	Command          string   `json:"command"`
+	CompositeCommand string   `json:"composite_command,omitempty"`
+	Pattern          string   `json:"pattern"`
+	InstallFrom      string   `json:"install_from"`
+	SeverityOverride Severity `json:"severity,omitempty"`
+	MessageOverride  string   `json:"message_override,omitempty"`
+	EventType        string
+
+	Regex            *regexp.Regexp
+}
+
+// MarshalJSON marshals struct to JSON.
+func (l *Linter) MarshalJSON() ([]byte, error) {
+	return json.Marshal(l.Name)
+}
+
+// String returns formatted string.
+func (l *Linter) String() string {
+	return l.Name
+}
+
+// Severity level of the issue.
+type Severity string
+
+// Linter message severity levels.
+const (
+	Warning Severity = "warning"
+	Error   Severity = "error"
+)
+
+// Issue represents issue in any of the go file.
+type Issue struct {
+	Linter   *Linter  `json:"linter"`
+	Severity Severity `json:"severity"`
+	Path     string   `json:"path"`
+	Line     int      `json:"line"`
+	Col      int      `json:"col"`
+	Message  string   `json:"message"`
+}
+
+// String returns formatted string.
+func (i *Issue) String() string {
+	col := ""
+	if i.Col != 0 {
+		col = fmt.Sprintf("%d", i.Col)
+	}
+	return fmt.Sprintf("%s:%d:%s:%s: %s (%s)", strings.TrimSpace(i.Path), i.Line, col, i.Severity, strings.TrimSpace(i.Message), i.Linter)
+}
+

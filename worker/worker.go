@@ -4,9 +4,17 @@ import (
 	"fmt"
 
 	"github.com/qfarm/qfarm/redis"
+	"log"
+	"time"
+	"github.com/qfarm/qfarm"
+	"path"
+	"os"
+	"encoding/json"
+	"os/exec"
 )
 
 type Worker struct {
+	linter   *Metalinter
 	redis    *redis.Service
 	notifier *Notifier
 	config   *Cfg
@@ -22,11 +30,150 @@ func NewWorker(config *Cfg) (*Worker, error) {
 	}
 
 	w.notifier = NewNotifier(w.redis)
+	w.linter = NewMetalinter(config, w.notifier)
 
 	return w, nil
 }
 
 func (w *Worker) Run() error {
-	// Run Redis pub-sub listener here
+	if err := w.redis.Subscribe("test-q-channel", w.fetchAndAnalyze); err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func (w *Worker) fetchAndAnalyze(data interface{}) error {
+	elem, err := w.redis.ListPop("test-q-list")
+	if err != nil {
+		// do nothing other worker might got the value from list before
+		return nil
+	}
+
+	if err := w.analyze(string(elem.([]byte))); err != nil {
+		log.Printf("Error during worker analysis! Err: %v \n", err)
+	}
+
+	return nil
+}
+
+func (w *Worker) analyze(repo string) error {
+	// download repo
+	if err := w.download(repo); err != nil {
+		return err
+	}
+
+	lastCommitHash, err := lastCommitHash(repo)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Hash of last commit %s\n", lastCommitHash)
+
+	// get last build number
+	firstTimeBuild := false
+	buildInfo, err := w.getLastBuildInfo(repo)
+	if err != nil {
+		if err == redis.ErrNotFound {
+			firstTimeBuild = true
+		} else {
+			return err
+		}
+	}
+
+	if !firstTimeBuild && w.config.CheckLastCommitHash {
+		// someone wants to analyze the same repo twice
+		if buildInfo.CommitHash == lastCommitHash {
+			w.notifier.SendEventWithPayload(repo, fmt.Sprintf("Repo %s already analyzed!", repo), EventTypeAlreadyAnalyzed, fmt.Sprintf("%s", buildInfo.No))
+			return fmt.Errorf("repo %s already analyzed!", repo)
+		}
+	}
+
+	// generate new build no
+	newBuild := qfarm.Build{Repo: repo, CommitHash: lastCommitHash, Time: time.Now().UTC()}
+	if firstTimeBuild {
+		newBuild.No = 1
+	} else {
+		newBuild.No = buildInfo.No + 1
+	}
+
+	// create repo config
+	buildCfg, err := LoadRepoCfg(repo, path.Join(os.Getenv("GOPATH"), "src", repo))
+	if err != nil {
+		return err
+	}
+
+	// marshal build info
+	newBuild.Config = *buildCfg
+	data, err := json.Marshal(newBuild)
+	if err != nil {
+		return err
+	}
+
+	// add new build to global list of all builds
+	if err := w.redis.ListPush("all-builds", data); err != nil {
+		return err
+	}
+
+	// add new build to list of builds per repo
+	if err := w.redis.ListPush("builds/"+repo, data); err != nil {
+		return err
+	}
+
+	// run all linters
+	if err := w.linter.Start(*buildCfg); err != nil {
+		return err
+	}
+
+	// run coverage
+
+	// generate directory structure
+
+	// generate total repo
+
+	w.notifier.SendEvent(repo, "All tasks done!", EventTypeAllDone)
+
+	fmt.Printf("All done\n")
+	return nil
+}
+
+func (w *Worker) getLastBuildInfo(repo string) (qfarm.Build, error) {
+	var build qfarm.Build
+	data, err := w.redis.ListGetLast("builds/" + repo)
+	if err != nil {
+		return build, err
+	}
+
+	if err := json.Unmarshal(data.([]byte), &build); err != nil {
+		return build, err
+	}
+
+	return build, nil
+}
+
+func (w *Worker) download(repo string) error {
+	fmt.Printf("Downloading %s...\n", repo)
+	if err := exec.Command("go", "get", "-u", "-t", path.Join(repo, "...")).Run(); err != nil {
+		return err
+	}
+
+	fmt.Printf("Repo %s downloaded!\n", repo)
+
+	w.notifier.SendEvent(repo, fmt.Sprintf("Repo %s downloaded", repo), EventTypeDownloadDone)
+
+	return nil
+}
+
+func lastCommitHash(repo string) (string, error) {
+	repoPath := path.Join(os.Getenv("GOPATH"), "src", repo)
+
+	cmd := exec.Command("git", "rev-parse", "HEAD")
+	cmd.Dir = repoPath
+
+	out, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+
+	return string(out), nil
 }

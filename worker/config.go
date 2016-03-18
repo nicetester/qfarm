@@ -6,6 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"reflect"
+	"github.com/qfarm/qfarm"
+	"os"
+	"gopkg.in/yaml.v2"
+	"path"
 )
 
 type Cfg struct {
@@ -89,5 +93,34 @@ func (c *Cfg) Print() {
 	for i := 0; i < s.NumField(); i++ {
 		f := s.Field(i)
 		log.Printf("%s %s = %v\n", typeOfT.Field(i).Name, f.Type(), f.Interface())
+	}
+}
+
+func LoadRepoCfg(repo, repoPath string) (*qfarm.BuildCfg, error) {
+	if _, err := os.Stat(path.Join(repoPath, ".qfarm.yml")); os.IsNotExist(err) {
+		// file config file
+		return &qfarm.BuildCfg{Repo: repo, Path: repoPath, Linters: defaultLinters}, nil
+	} else {
+		// file exists
+		yamlFile, err := ioutil.ReadFile(path.Join(repoPath, ".qfarm.yml"))
+		if err != nil {
+			return nil, err
+		}
+
+		cfg := qfarm.BuildCfg{}
+		err = yaml.Unmarshal(yamlFile, &cfg)
+		if err != nil {
+			return nil, err
+		}
+
+		// if linters list empty - use default list
+		if len(cfg.Linters) == 0 {
+			cfg.Linters = defaultLinters
+		}
+
+		cfg.Repo = repo
+		cfg.Path = repoPath
+
+		return &cfg, nil
 	}
 }
