@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 
@@ -43,6 +44,37 @@ func (s *Service) LastBuilds(w http.ResponseWriter, req *http.Request) {
 	builds, err := s.r.ListGetLastElements("all-builds", 10)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	lastBuilds := make([]qfarm.Build, 0)
+	for _, b := range builds {
+		var single qfarm.Build
+		if err := json.Unmarshal(b, &single); err != nil {
+			writeErrJSON(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		lastBuilds = append(lastBuilds, single)
+	}
+
+	if err := writeJSON(w, lastBuilds); err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+}
+
+// LastRepoBuilds returns most recent builds among specified repository.
+func (s *Service) LastRepoBuilds(w http.ResponseWriter, req *http.Request) {
+	repo := req.URL.Query().Get("repo")
+	if repo == "" {
+		writeErrJSON(w, errors.New("Repo should be set!"), http.StatusBadRequest)
+		return
+	}
+
+	builds, err := s.r.ListGetLastElements("builds:"+repo, 10)
+	if err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
 		return
 	}
 
