@@ -1,0 +1,29 @@
+# CheckLastCommitHash flag whether analysis should be done for the same commit hash
+CheckLastCommitHash = false
+
+# RedisConn - Connection string for Redis
+RedisConn = "redis:6379"
+
+# RedisPass - Password for Redis
+RedisPass = ""
+
+# Debug - Display messages for failed linters, etc.
+Debug = true
+
+# Concurrency - Number of concurrent linters to run
+Concurrency = 16
+
+# Cyclo - Report functions with cyclomatic complexity over N (using gocyclo)
+Cyclo = 10
+
+# Report lines longer than N (using lll)
+LLLineLength = 120
+
+# Minimum confidence interval to pass to golint
+GolintMinConfidence = 0.8
+
+# Minimum occurrences to pass to goconst
+GoconstMinOccurrences = 3
+
+# Minimum token sequence as a clone for dupl
+DuplThreshold = 50
