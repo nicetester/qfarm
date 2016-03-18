@@ -17,6 +17,7 @@ type Worker struct {
 	linter   *Metalinter
 	redis    *redis.Service
 	notifier *Notifier
+	coverage *CoverageChecker
 	config   *Cfg
 }
 
@@ -31,6 +32,7 @@ func NewWorker(config *Cfg) (*Worker, error) {
 
 	w.notifier = NewNotifier(w.redis)
 	w.linter = NewMetalinter(config, w.notifier)
+	w.coverage = NewCoverageChecker(config, w.notifier)
 
 	return w, nil
 }
@@ -116,7 +118,7 @@ func (w *Worker) analyze(repo string) error {
 	}
 
 	// add new build to list of builds per repo
-	if err := w.redis.ListPush("builds/"+repo, data); err != nil {
+	if err := w.redis.ListPush("builds:"+repo, data); err != nil {
 		return err
 	}
 
@@ -126,6 +128,9 @@ func (w *Worker) analyze(repo string) error {
 	}
 
 	// run coverage
+	if err := w.coverage.Start(*buildCfg); err != nil {
+		return err
+	}
 
 	// generate directory structure
 
