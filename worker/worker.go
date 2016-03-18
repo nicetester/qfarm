@@ -122,8 +122,14 @@ func (w *Worker) analyze(repo string) error {
 		return err
 	}
 
+	// generate directory structure
+	ft, err := BuildTree(buildCfg.Path)
+	if err != nil {
+		return err
+	}
+
 	// run all linters
-	if err := w.linter.Start(*buildCfg); err != nil {
+	if err := w.linter.Start(*buildCfg, ft); err != nil {
 		return err
 	}
 
@@ -132,9 +138,8 @@ func (w *Worker) analyze(repo string) error {
 		return err
 	}
 
-	// generate directory structure
+	// generate report
 
-	// generate total repo
 
 	w.notifier.SendEvent(repo, "All tasks done!", EventTypeAllDone)
 

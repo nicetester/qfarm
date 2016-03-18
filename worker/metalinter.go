@@ -2,7 +2,6 @@ package worker
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -16,6 +15,7 @@ import (
 
 	"github.com/google/shlex"
 	"github.com/qfarm/qfarm"
+	"log"
 )
 
 const (
@@ -158,15 +158,8 @@ func LinterFromName(name string) (*qfarm.Linter, error) {
 	}, nil
 }
 
-func (m *Metalinter) Start(cfg qfarm.BuildCfg) error {
+func (m *Metalinter) Start(cfg qfarm.BuildCfg, ft *FilesMap) error {
 	start := time.Now()
-
-	// TODO: it should be isolated somehow
-	if cfg.Vendor {
-		os.Setenv("GO15VENDOREXPERIMENT", "1")
-		cfg.SkipDirs = append(cfg.SkipDirs, "vendor")
-	}
-
 	paths := m.expandPaths([]string{cfg.Path + "/..."}, cfg.SkipDirs)
 
 	m.debug("Analyzing following paths: %v", paths)
@@ -174,8 +167,17 @@ func (m *Metalinter) Start(cfg qfarm.BuildCfg) error {
 	linters := m.linters(cfg.Linters)
 	issues, errch := m.runLinters(linters, cfg.Repo, paths, m.cfg.Concurrency, cfg.IncludeTests)
 
-	// TODO: store issues in redis
-	outputToJSON(issues)
+	for issue := range issues {
+		if strings.HasSuffix(issue.Path, ".gen.go") || strings.HasSuffix(issue.Path, ".pb.go") {
+			continue
+		}
+
+		if err := ft.ApplyIssue(issue); err != nil {
+			return err
+		}
+
+		// TODO: store issues in redis
+	}
 
 	for err := range errch {
 		warning("%s", err)
@@ -189,12 +191,12 @@ func (m *Metalinter) Start(cfg qfarm.BuildCfg) error {
 
 func (m *Metalinter) debug(format string, args ...interface{}) {
 	if m.cfg.Debug {
-		fmt.Fprintf(os.Stderr, "DEBUG: "+format+"\n", args...)
+		log.Printf("DEBUG: "+format+"\n", args...)
 	}
 }
 
 func warning(format string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, "WARNING: "+format+"\n", args...)
+	log.Printf("WARNING: "+format, args...)
 }
 
 type Vars map[string]string
@@ -218,22 +220,6 @@ func (v Vars) Replace(s string) string {
 		s = strings.Replace(s, fmt.Sprintf("{%s}", k), v, -1)
 	}
 	return s
-}
-
-func outputToJSON(issues chan *qfarm.Issue) {
-	fmt.Println("[")
-	counter := 0
-	for issue := range issues {
-		if strings.HasSuffix(issue.Path, ".gen.go") || strings.HasSuffix(issue.Path, ".pb.go") {
-			continue
-		}
-
-		counter++
-		d, _ := json.Marshal(issue)
-		fmt.Printf("  %s \n", d)
-	}
-	fmt.Printf("\n]\n")
-	fmt.Printf("Found %d issues\n", counter)
 }
 
 func (m *Metalinter) runLinters(linters map[string]*qfarm.Linter, repo string, paths []string, concurrency int, includeTests bool) (chan *qfarm.Issue, chan error) {

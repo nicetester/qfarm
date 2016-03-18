@@ -1,11 +1,11 @@
 package qfarm
 
 import (
-	"time"
 	"encoding/json"
 	"fmt"
-"strings"
 	"regexp"
+	"strings"
+	"time"
 )
 
 // Build represents single build.
@@ -69,18 +69,19 @@ type PackageReport struct {
 
 // Node represents a node in directory tree. It might be a file or a directory.
 type Node struct {
-	Path     string  `json:"path"`
-	Nodes    []*Node  `json:"nodes"`
-	Parent   *Node   `json:"parent"`
-	Dir      bool    `json:"dir"`
-	Coverage float64 `json:"coverage"`
-	TestsNo  int     `json:"testsNo"`
-	FailedNo int     `json:"failedNo"`
-	PassedNo int     `json:"passedNo"`
-	IssuesNo int     `json:"issuesNo"`
-	ErrorsNo int     `json:"errorsNo"`
-	WarningsNo int   `json:"warningsNo"`
-	Issues   []*Issue `json:"issues"`
+	Path       string   `json:"path"`
+	Nodes      []Node  `json:"nodes"`
+	ParentPath string    `json:"parent"`
+	Dir        bool     `json:"dir"`
+	Coverage   float64  `json:"coverage"`
+	TestsNo    int      `json:"testsNo"`
+	FailedNo   int      `json:"failedNo"`
+	PassedNo   int      `json:"passedNo"`
+	IssuesNo   int      `json:"issuesNo"`
+	ErrorsNo   int      `json:"errorsNo"`
+	WarningsNo int      `json:"warningsNo"`
+	Issues     []*Issue `json:"issues"`
+	Content    []byte   `json:"content"`
 }
 
 // Linter represents linter details. It's used in metalinter.
@@ -94,7 +95,7 @@ type Linter struct {
 	MessageOverride  string   `json:"message_override,omitempty"`
 	EventType        string
 
-	Regex            *regexp.Regexp
+	Regex *regexp.Regexp
 }
 
 // MarshalJSON marshals struct to JSON.
@@ -134,4 +135,3 @@ func (i *Issue) String() string {
 	}
 	return fmt.Sprintf("%s:%d:%s:%s: %s (%s)", strings.TrimSpace(i.Path), i.Line, col, i.Severity, strings.TrimSpace(i.Message), i.Linter)
 }
-
