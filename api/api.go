@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/qfarm/qfarm"
@@ -23,16 +24,29 @@ func (s *Service) TriggerBuild(w http.ResponseWriter, req *http.Request) {
 	dec := json.NewDecoder(req.Body)
 	build := new(qfarm.Build)
 	if err := dec.Decode(build); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		WriteErrJSON(w, err, http.StatusBadRequest)
 		return
 	}
 
 	if err := s.r.ListPush("test-q-list", build.Repo); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		WriteErrJSON(w, err, http.StatusInternalServerError)
 		return
 	}
 	if err := s.r.Publish("test-q-channel", build.Repo); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		WriteErrJSON(w, err, http.StatusInternalServerError)
 		return
 	}
+}
+
+// WriteErrJSON wraps error in JSON structure.
+func WriteErrJSON(w http.ResponseWriter, err error, status int) {
+	log.Print(err.Error())
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	var errMap = map[string]interface{}{
+		"error": err.Error(),
+	}
+
+	body, _ := json.Marshal(errMap)
+	http.Error(w, string(body), status)
 }
