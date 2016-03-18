@@ -24,22 +24,47 @@ func (s *Service) TriggerBuild(w http.ResponseWriter, req *http.Request) {
 	dec := json.NewDecoder(req.Body)
 	build := new(qfarm.Build)
 	if err := dec.Decode(build); err != nil {
-		WriteErrJSON(w, err, http.StatusBadRequest)
+		writeErrJSON(w, err, http.StatusBadRequest)
 		return
 	}
 
 	if err := s.r.ListPush("test-q-list", build.Repo); err != nil {
-		WriteErrJSON(w, err, http.StatusInternalServerError)
+		writeErrJSON(w, err, http.StatusInternalServerError)
 		return
 	}
 	if err := s.r.Publish("test-q-channel", build.Repo); err != nil {
-		WriteErrJSON(w, err, http.StatusInternalServerError)
+		writeErrJSON(w, err, http.StatusInternalServerError)
 		return
 	}
 }
 
-// WriteErrJSON wraps error in JSON structure.
-func WriteErrJSON(w http.ResponseWriter, err error, status int) {
+// LastBuilds returns most recent builds among all repositories.
+func (s *Service) LastBuilds(w http.ResponseWriter, req *http.Request) {
+	builds, err := s.r.ListGetLastElements("all-builds", 10)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	lastBuilds := make([]qfarm.Build, 0)
+	for _, b := range builds {
+		var single qfarm.Build
+		if err := json.Unmarshal(b, &single); err != nil {
+			writeErrJSON(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		lastBuilds = append(lastBuilds, single)
+	}
+
+	if err := writeJSON(w, lastBuilds); err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+}
+
+// writeErrJSON wraps error in JSON structure.
+func writeErrJSON(w http.ResponseWriter, err error, status int) {
 	log.Print(err.Error())
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -49,4 +74,19 @@ func WriteErrJSON(w http.ResponseWriter, err error, status int) {
 
 	body, _ := json.Marshal(errMap)
 	http.Error(w, string(body), status)
+}
+
+// writeJSON write response to client, response is a struct defining JSON reply.
+func writeJSON(w http.ResponseWriter, response interface{}) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	json, err := json.Marshal(response)
+	if err != nil {
+		return err
+	}
+
+	if _, err := w.Write(json); err != nil {
+		return err
+	}
+
+	return nil
 }

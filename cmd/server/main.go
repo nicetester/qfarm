@@ -25,6 +25,7 @@ func main() {
 	as := api.NewService(r)
 	router := mux.NewRouter()
 	router.HandleFunc("/build/", as.TriggerBuild).Methods("POST")
+	router.HandleFunc("/last_builds/", as.LastBuilds).Methods("GET")
 
 	http.Handle("/", router)
 	log.Printf("Starting to serve on %s", *listen)
