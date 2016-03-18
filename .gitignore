@@ -39,3 +39,5 @@ target/
 # node_modules
 webapp/node_modules
 badge/node_modules
+
+npm-debug.log

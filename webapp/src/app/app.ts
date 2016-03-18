@@ -1,7 +1,8 @@
 import {Component} from 'angular2/core';
 import {RouteConfig, Router} from 'angular2/router';
 
-import {Home} from './home/home';
+import { Entry } from './entry/entry';
+import { Build } from './builds/build';
 
 @Component({
     selector: 'app',
@@ -26,7 +27,9 @@ import {Home} from './home/home';
     template: require('./app.html')
 })
 @RouteConfig([
-  { path: '/',      name: 'Index', component: Home, useAsDefault: true },
+    { path: '/',      name: 'Entry', component: Entry, useAsDefault: true },
+    { path: '/build/:repoName/', component: Build, name: 'Last Build' },
+    { path: '/build/:repoName/:buildId/', component: Build, name: 'Build' }
 ])
 export class App {
     name = 'Quality Farm';
