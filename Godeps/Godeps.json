@@ -1,0 +1,25 @@
+{
+	"ImportPath": "github.com/qfarm/qfarm",
+	"GoVersion": "go1.6",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/garyburd/redigo/internal",
+			"Rev": "836b6e58b3358112c8291565d01c35b8764070d7"
+		},
+		{
+			"ImportPath": "github.com/garyburd/redigo/redis",
+			"Rev": "836b6e58b3358112c8291565d01c35b8764070d7"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "1c83b3eabd45b6d76072b66b746c20815fb2872d"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "9c068cf16d982f8bd444b8c352acbeec34c4fe5b"
+		}
+	]
+}
