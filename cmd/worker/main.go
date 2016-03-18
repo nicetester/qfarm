@@ -7,7 +7,7 @@ import (
 	"github.com/qfarm/qfarm/worker"
 )
 
-var configPath = flag.String("config-path", "configs/worker.toml", "Path to configuration file.")
+var configPath = flag.String("config-path", "config/worker.toml", "Path to configuration file.")
 
 func main() {
 	flag.Parse()
