@@ -7,3 +7,10 @@ worker:
   dockerfile: Dockerfile-worker
   links:
     - redis:redis
+server:
+  build: .
+  dockerfile: Dockerfile-server
+  links:
+    - redis:redis
+  ports:
+    - "8080:8080"
