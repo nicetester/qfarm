@@ -3,14 +3,15 @@ package worker
 import (
 	"fmt"
 
+	"encoding/json"
+	"github.com/qfarm/qfarm"
 	"github.com/qfarm/qfarm/redis"
 	"log"
-	"time"
-	"github.com/qfarm/qfarm"
-	"path"
 	"os"
-	"encoding/json"
 	"os/exec"
+	"path"
+	"strings"
+	"time"
 )
 
 type Worker struct {
@@ -62,6 +63,10 @@ func (w *Worker) fetchAndAnalyze(data interface{}) error {
 func (w *Worker) analyze(repo string) error {
 	// download repo
 	if err := w.download(repo); err != nil {
+		return err
+	}
+
+	if err := w.markAsUserRepo(repo); err != nil {
 		return err
 	}
 
@@ -172,6 +177,13 @@ func (w *Worker) download(repo string) error {
 	w.notifier.SendEvent(repo, fmt.Sprintf("Repo %s downloaded", repo), EventTypeDownloadDone)
 
 	return nil
+}
+
+func (w *Worker) markAsUserRepo(repo string) error {
+	userName := strings.Split(repo, "/")[1]
+	_, err := w.redis.SortedSetRank("users:"+userName+":repos", repo)
+
+	return err
 }
 
 func lastCommitHash(repo string) (string, error) {

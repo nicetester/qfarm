@@ -27,6 +27,7 @@ func main() {
 	router.HandleFunc("/build/", as.TriggerBuild).Methods("POST")
 	router.HandleFunc("/last_builds/", as.LastBuilds).Methods("GET")
 	router.HandleFunc("/last_repo_builds/", as.LastRepoBuilds).Methods("GET")
+	router.HandleFunc("/user_repos/", as.UserRepos).Methods("GET")
 
 	http.Handle("/", router)
 	log.Printf("Starting to serve on %s", *listen)

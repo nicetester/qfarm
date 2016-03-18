@@ -95,6 +95,30 @@ func (s *Service) LastRepoBuilds(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func (s *Service) UserRepos(w http.ResponseWriter, req *http.Request) {
+	user := req.URL.Query().Get("user")
+	if user == "" {
+		writeErrJSON(w, errors.New("User should be set!"), http.StatusBadRequest)
+		return
+	}
+
+	repos, err := s.r.SortedSetGetAllRev("users:" + user + ":repos")
+	if err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	userRepos := make([]string, 0)
+	for _, r := range repos {
+		userRepos = append(userRepos, string(r))
+	}
+
+	if err := writeJSON(w, userRepos); err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+}
+
 // writeErrJSON wraps error in JSON structure.
 func writeErrJSON(w http.ResponseWriter, err error, status int) {
 	log.Print(err.Error())

@@ -108,7 +108,6 @@ func (c *CoverageChecker) runCoverageAnalysis(cfg qfarm.BuildCfg) error {
 			return err
 		}
 
-		packages[i].Html = string(out)
 		c.debug("Coverage anlysis of package(%s) Done", pac.Name)
 	}
 
