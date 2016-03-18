@@ -8,8 +8,8 @@
                  [mount "0.1.10"]
                  [org.clojure/tools.logging "0.3.1"]
                  [com.taoensso/carmine "2.12.2"]
-                 [log4j/log4j "1.2.17"]]
+                 [log4j/log4j "1.2.17"]
+                 [org.clojure/tools.namespace "0.2.11"]]
   :main ^:skip-aot qfarm-websocket.core
   :target-path "target/%s"
-  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]]}
-             :uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}})

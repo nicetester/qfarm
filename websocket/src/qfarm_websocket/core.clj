@@ -2,6 +2,7 @@
   (:gen-class)
   (:require [clojure.tools.logging :refer [info]]
             [clojure.tools.namespace.repl :as tn]
+            [qfarm-websocket.server]
             [mount.core :as mount]))
 
 (defn go
@@ -21,7 +22,7 @@
 
 (defn -main
   [& args]
-  (mount.core/start-with-args {:port 8081
-                               :redis-host "redis"
-                               :redis-port 6379
-                               :redis-topic "events"}))
+  (go {:port 8081
+       :redis-host "redis"
+       :redis-port 6379
+       :redis-topic "events"}))

@@ -14,3 +14,10 @@ server:
     - redis:redis
   ports:
     - "8080:8080"
+websocket:
+  build: .
+  dockerfile: Dockerfile-ws
+  links:
+    - redis:redis
+  ports:
+    - "8081:8081"
