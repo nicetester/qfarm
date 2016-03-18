@@ -1,0 +1,10 @@
+FROM viru/gometalinters:latest
+
+ADD . /go/src/github.com/qfarm/qfarm
+
+WORKDIR /go/src/github.com/qfarm/qfarm
+
+RUN go get github.com/qfarm/qfarm/cmd/worker
+
+EXPOSE 8080
+CMD /go/bin/worker

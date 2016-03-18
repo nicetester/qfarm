@@ -2,3 +2,8 @@ redis:
   image: redis:3.0.7
   ports:
     - "6379:6379"
+worker:
+  build: .
+  dockerfile: Dockerfile-worker
+  links:
+    - redis:redis
