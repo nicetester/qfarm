@@ -1,20 +1,23 @@
 <div class="build-header">
-    {{ repoName }}
+    <div class="subtitle">
+        <small>{{summary.path}}</small>
+    </div>
+    {{ summary.repoName }} #{{summary.no}}
 </div>
-<nav>
-    <div class="summary-tab" (click)="showSummary()">
+<nav class="tabs">
+    <div class="tab summary-tab" [class.active]="tab === 'summary'" (click)="showSummary()">
         Summary
     </div>
-    <div class="issues-tab" (click)="showIssues()">
+    <div class="tab issues-tab" [class.active]="tab === 'issues'" (click)="showIssues()">
         Issues
     </div>
-    <div class="files-tab" (click)="showFiles()">
+    <div class="tab files-tab" [class.active]="tab === 'files'" (click)="showFiles()">
         Files
     </div>
 </nav>
 
 <div>
-    <summary-tab *ngIf="tab === 'summary'"></summary-tab>
+    <summary-tab *ngIf="tab === 'summary'" [summary]="summary"></summary-tab>
     <issues-tab *ngIf="tab === 'issues'"></issues-tab>
     <files-tab *ngIf="tab === 'files'"></files-tab>
 </div>

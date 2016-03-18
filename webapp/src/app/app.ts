@@ -9,21 +9,7 @@ import { Build } from './builds/build';
     pipes: [ ],
     providers: [ ],
     directives: [ ],
-    styles: [`
-      nav ul {
-        display: inline;
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        width: 60px;
-      }
-      nav li {
-        display: inline;
-      }
-      nav li.active {
-        background-color: lightgray;
-      }
-    `],
+    styles: [require('./app.css')],
     template: require('./app.html')
 })
 @RouteConfig([

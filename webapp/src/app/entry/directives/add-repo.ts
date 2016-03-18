@@ -6,6 +6,7 @@ import { BuildsService } from '../../services/builds.service';
 @Component({
     selector: 'add-repo',
     template: require('./add-repo.html'),
+    styles: [require('./add-repo.css')],
     providers: [BuildsService]
 })
 export class AddRepo {

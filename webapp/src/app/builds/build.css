@@ -1,0 +1,30 @@
+.build-header {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+}
+.build-header .subtitle {
+    font-size: 1.5rem;
+    font-weight: normal;
+    color: grey;
+}
+
+nav.tabs {
+    text-align: center;
+}
+
+.tab {
+    width: 150px;
+    display: inline-block;
+    background-color: white;
+    border: solid 1px blue;
+    font-size: 1.5rem;
+    color: blue;
+    border-radius: 5px;
+    text-align: center;
+}
+.tab.active {
+    background-color: blue;
+    border: solid 1px white;
+    color: white;
+}
