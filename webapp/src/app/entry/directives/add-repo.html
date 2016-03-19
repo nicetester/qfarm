@@ -1,12 +1,17 @@
-<div>
-  <input type="text" [(ngModel)]="repoName" class="reponame-input" (keyup.enter)="startBuild()" />
+  <div class="jumbotron">
 
-  <div class="trigger-button" (click)="startBuild()">
-    Go
-    <i [class.hidden]="!events['in-progress']" class="fa fa-cog fa-spin"></i>
+    <h1>Check your project!</h1>
+    <p>Paste here URL to your repository</p>
+    <p>
+      <input type="text" [(ngModel)]="repoName" class="reponame-input" style="width:60%" (keyup.enter)="startBuild()" />
+    </p>
+    <p>
+      <button class="btn btn-primary btn-lg" (click)="startBuild()">
+        Go <i [class.hidden]="!events['in-progress']" class="fa fa-cog fa-spin"></i>
+      </button>
+    </p>
   </div>
 
-  <br/>
   <div [class.hidden]="!events['in-progress']" class="text-center linters">
     <span class="badge linter-badge" [class.done]="events['aligncheck-done']">Aligncheck</span>
 	<span class="badge linter-badge" [class.done]="events['deadcode-done']">Deadcode</span>
@@ -30,5 +35,3 @@
 	<span class="badge linter-badge" [class.done]="events['unconvert-done']">Unconvert</span>
 	<span class="badge linter-badge" [class.done]="events['coverage-done']">Coverage</span>
   </div>
-
-</div>
