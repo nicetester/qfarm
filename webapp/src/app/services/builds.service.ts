@@ -7,7 +7,7 @@ import { Build } from './Build'
 @Injectable()
 export class BuildsService {
 
-    host = 'http://localhost:8080/';
+    host = 'http://docker:8080/';
 
     constructor(private http: Http){}
 
