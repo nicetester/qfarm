@@ -29,7 +29,7 @@ export class SummaryTab {
 
     showScoreChart() {
         new Highcharts.Chart('score-chart', {
-
+			credits: false,
             chart: {
               type: 'solidgauge',
               marginTop: 20
