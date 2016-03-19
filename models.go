@@ -119,7 +119,7 @@ type Linter struct {
 }
 
 // MarshalJSON marshals struct to JSON.
-func (l *Linter) MarshalJSON() ([]byte, error) {
+func (l Linter) MarshalJSON() ([]byte, error) {
 	return json.Marshal(l.Name)
 }
 
@@ -129,7 +129,13 @@ func (l *Linter) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("Empty byte slice")
 	}
 
-	*l = Linter{Name: string(data)}
+	var str string
+	err := json.Unmarshal(data, &str)
+	if err != nil {
+		return err
+	}
+
+	*l = Linter{Name: str}
 	return nil
 }
 
