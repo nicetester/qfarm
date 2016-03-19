@@ -55,6 +55,7 @@ func (w *Worker) fetchAndAnalyze(data interface{}) error {
 	}
 
 	if err := w.analyze(string(elem.([]byte))); err != nil {
+		w.notifier.SendEvent(string(elem.([]byte)), fmt.Sprintf("Error: %s", err.Error()), EventTypeError)
 		log.Printf("Error during worker analysis! Err: %v \n", err)
 	}
 

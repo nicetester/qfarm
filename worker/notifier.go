@@ -50,7 +50,7 @@ const (
 	EventTypeDownloadDone = "download-done"
 
 	EventTypeAligncheckDone  = "aligncheck-done"
-	EventTypeDeadcodeDone = "deadcode-done"
+	EventTypeDeadcodeDone    = "deadcode-done"
 	EventTypeDuplDone        = "dupl-done"
 	EventTypeErrcheckDone    = "errcheck-done"
 	EventTypeGoconstDone     = "goconst-done"
@@ -71,8 +71,9 @@ const (
 	EventTypeUnconvertDone   = "unconvert-done"
 	EventTypeMetalinterErr   = "metalinter-error"
 
-	EventTypeCoverageDone    = "coverage-done"
-	EventTypeCoverageErr     = "coverage-error"
+	EventTypeCoverageDone = "coverage-done"
+	EventTypeCoverageErr  = "coverage-error"
+	EventTypeError        = "error"
 
 	EventTypeAlreadyAnalyzed = "already-analyzed"
 )
