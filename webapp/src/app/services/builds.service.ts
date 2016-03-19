@@ -7,6 +7,10 @@ import { Build } from './Build'
 @Injectable()
 export class BuildsService {
 
+    host = 'http://localhost:8080/';
+
+    constructor(private http: Http){}
+
     getAllBuilds() {
         return Rx.Observable.fromPromise(Promise.resolve([
             new Build(3, 'userA/repoX'),
@@ -14,20 +18,17 @@ export class BuildsService {
             new Build(2, 'userA/repoX'),
             new Build(1, 'userA/repoX')
         ]));
+
     }
 
     startNewBuild(repoName: string) {
-        return Rx.Observable.fromPromise(
-            Promise.resolve(new Build(1, repoName))
-        );
+        return this.http.post(
+            this.host + 'build/',
+            JSON.stringify({repo: repoName}));
     }
 
     getRepoBuilds(repoName: string) {
-        return Rx.Observable.fromPromise(Promise.resolve([
-            new Build(3, repoName),
-            new Build(2, repoName),
-            new Build(1, repoName)
-        ]));
+        return this.http.get(this.host + 'last_repo_builds/?repo=' + repoName);
     }
 
     getBuildSummary(repoName: string, buildId: string) {
@@ -39,7 +40,7 @@ export class BuildsService {
                 score: Math.floor(Math.random()*100),
                 time: Date.now()
             }
-        )); 
+        ));
     }
 
 }

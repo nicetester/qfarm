@@ -1,3 +1,23 @@
 <section class="issues-panel">
-     2
+    <div *ngFor="#issue of issues"
+         class="issue-card"
+         [class.error]="issue.severity === 'error'"
+         [class.warning]="issue.severity === 'warning'" >
+        <div class="icon">
+            <i *ngIf="issue.severity === 'error'" class="fa fa-exclamation-circle"></i>
+            <i *ngIf="issue.severity === 'warning'" class="fa fa-exclamation-triangle"></i>
+        </div>
+        <div class="body">
+            <div class="header">
+                <span class="linter">{{issue.linter}}</span>
+                <span class="message">{{issue.message}}</span>
+            </div>
+            <div class="details">
+                Location: {{issue.path}}:{{issue.line}}:{{issue.col}}
+            </div>
+        </div>
+        <div class="goto-link">
+            <i class="fa fa-chevron-right"></i>
+        </div>
+    </div>
 </section>

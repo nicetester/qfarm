@@ -5,59 +5,13 @@ import * as Rx from 'rxjs';
 @Injectable()
 export class IssuesService {
 
-    getAllIssues(repoName: string, buildId: stirng, first: number, limit: number) {
-        return Rx.Observable.fromPromise(Promise.resolve([
-            {
-                file: 'path/to/file',
-                line: 612,
-                message: 'error: error not found',
-                level: 'major'
-            },
-            {
-                file: 'path/to/file',
-                line: 612,
-                message: 'error: error not found',
-                level: 'minor'
-            },
-            {
-                file: 'path/to/file',
-                line: 612,
-                message: 'error: error not found',
-                level: 'major'
-            },
-            {
-                file: 'path/to/file',
-                line: 612,
-                message: 'error: error not found',
-                level: 'major'
-            },
-        ]));
+    host = 'http://localhost:8080/';
+
+    constructor(private http: Http){}
+
+    getAllIssues(repoName: string, buildId: string, first: number, limit: number) {
+        return this.http.get(this.host + 'issues/?repo=github.com/qfarm/bad-go-code&filter=error&skip=0&size=10');
     }
 
-    startNewBuild(repoName: string) {
-        return Rx.Observable.fromPromise(
-            Promise.resolve(new Build(1, repoName))
-        );
-    }
-
-    getRepoBuilds(repoName: string) {
-        return Rx.Observable.fromPromise(Promise.resolve([
-            new Build(3, repoName),
-            new Build(2, repoName),
-            new Build(1, repoName)
-        ]));
-    }
-
-    getBuildSummary(repoName: string, buildId: string) {
-        return Rx.Observable.fromPromise(Promise.resolve(
-            {
-                path: 'github.com/qfarm',
-                repoName: 'bad-go-code',
-                no: 123,
-                score: Math.floor(Math.random()*100),
-                time: Date.now()
-            }
-        )); 
-    }
 
 }

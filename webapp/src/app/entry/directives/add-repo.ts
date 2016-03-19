@@ -18,7 +18,7 @@ export class AddRepo {
 
     startBuild() {
         this._buildsService.startNewBuild(this.repoName).subscribe(
-            build => this.goToBuild(build.repo),
+            build => this.goToBuild(this.repoName),
             err => console.error('Err', err)
         )
     }

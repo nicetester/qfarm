@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/qfarm/qfarm/api"
 	"github.com/qfarm/qfarm/redis"
@@ -31,7 +32,7 @@ func main() {
 	router.HandleFunc("/issues/", as.RepoIssues).Methods("GET")
 	router.HandleFunc("/reports/", as.Report).Methods("GET")
 
-	http.Handle("/", router)
+	http.Handle("/", handlers.CORS()(router))
 	log.Printf("Starting to serve on %s", *listen)
 	log.Fatal(http.ListenAndServe(*listen, nil))
 }
