@@ -1,7 +1,6 @@
 package worker
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -112,17 +111,14 @@ func (t *FilesMap) ApplyCover(r *qfarm.CoverageReport) error {
 	for k := range t.FilesMap {
 		for _, p := range r.Packages {
 			if strings.HasSuffix(k, p.Name) {
-				fmt.Printf("--- %s\n", k)
-				fmt.Printf("... %s\n", p.Name)
 				t.FilesMap[k].Coverage = p.Coverage
 				break
 			}
 			for f, v := range p.Files {
 				path := filepath.Join(p.Name, f)
 				if strings.HasSuffix(k, path) {
-					fmt.Printf("--- %s\n", k)
-					fmt.Printf("... %s\n", path)
 					t.FilesMap[k].Coverage = v.Coverage
+					break
 				}
 			}
 		}
