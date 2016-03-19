@@ -4,14 +4,15 @@ import (
 	"fmt"
 
 	"encoding/json"
-	"github.com/qfarm/qfarm"
-	"github.com/qfarm/qfarm/redis"
 	"log"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
 	"time"
+
+	"github.com/qfarm/qfarm"
+	"github.com/qfarm/qfarm/redis"
 )
 
 type Worker struct {
@@ -47,7 +48,7 @@ func (w *Worker) Run() error {
 }
 
 func (w *Worker) fetchAndAnalyze(data interface{}) error {
-	elem, err := w.redis.ListPop("test-q-list")
+	elem, err := w.redis.ListPop("test-q-list") // TODO: drain list to the bottom
 	if err != nil {
 		// do nothing other worker might got the value from list before
 		return nil
@@ -144,7 +145,6 @@ func (w *Worker) analyze(repo string) error {
 	}
 
 	// generate report
-
 
 	w.notifier.SendEvent(repo, "All tasks done!", EventTypeAllDone)
 

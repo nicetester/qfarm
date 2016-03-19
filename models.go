@@ -57,19 +57,18 @@ type CoverageReport struct {
 
 // PackageReport holds info about coverage analysis of specified package.
 type PackageReport struct {
-	Name     string            `json:"name"`
-	Coverage float64           `json:"coverage"`
-	Failed   bool              `json:"failed"`
-	TestsNo  int               `json:"testsNo"`
-	PassedNo int               `json:"passedNo"`
-	FailedNo int               `json:"failedNo"`
-	Time     time.Duration     `json:"time"`
-	Files    []CoverFileReport `json:"files"`
+	Name     string        `json:"name"`
+	Coverage float64       `json:"coverage"`
+	Failed   bool          `json:"failed"`
+	TestsNo  int           `json:"testsNo"`
+	PassedNo int           `json:"passedNo"`
+	FailedNo int           `json:"failedNo"`
+	Time     time.Duration `json:"time"`
+	Files    map[string]CoverFileReport
 }
 
 // CoverFileReport holds coverage report for single file.
 type CoverFileReport struct {
-	Name     string `json:"name"`
 	Coverage float64
 	Blocks   []CoverBlock
 }
