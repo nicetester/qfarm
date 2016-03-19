@@ -1,5 +1,6 @@
 import {Component} from 'angular2/core';
 import {RouteConfig, Router} from 'angular2/router';
+import {WebSocketService} from './services/websocket.service';
 
 import { Entry } from './entry/entry';
 import { Build } from './builds/build';
@@ -7,7 +8,7 @@ import { Build } from './builds/build';
 @Component({
     selector: 'app',
     pipes: [ ],
-    providers: [ ],
+    providers: [ WebSocketService ],
     directives: [ ],
     styles: [require('./app.css')],
     template: require('./app.html')
@@ -20,6 +21,11 @@ import { Build } from './builds/build';
 export class App {
     name = 'Quality Farm';
 
-    constructor() {}
+    constructor(private _websocketService : WebSocketService) {
+        this._websocketService.init();
+        this._websocketService.socket.subscribe((data) => {
+            console.log(data);
+        });
+    }
 
 }
