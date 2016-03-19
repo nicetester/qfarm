@@ -222,6 +222,17 @@ func calculateScore(n *qfarm.Node) int {
 func (w *Worker) storeNodes(repo string, no int, ft *FilesMap) error {
 	prefix := "files:" + repo
 	for path, node := range ft.FilesMap {
+		n := strings.Index(node.Path, repo)
+		if n < 0 {
+			return fmt.Errorf("can't trim node path: %s", node.Path)
+		}
+		localPath := node.Path[:n]
+		node.Path = strings.TrimPrefix(node.Path, localPath)
+		node.ParentPath = strings.TrimPrefix(node.ParentPath, localPath)
+		for i := range node.Nodes {
+			node.Nodes[i].Path = strings.TrimPrefix(node.Nodes[i].Path, localPath)
+			node.Nodes[i].ParentPath = strings.TrimPrefix(node.Nodes[i].ParentPath, localPath)
+		}
 		if node.Dir {
 			path += "/"
 		}
