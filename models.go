@@ -45,25 +45,25 @@ type BuildCfg struct {
 
 // CoverageReport holds info about coverage analysis of entire repo.
 type CoverageReport struct {
-	Repo          string          `json:"repo"`
-	TotalCoverage float64         `json:"totalCoverage"`
-	TotalTestsNo  int             `json:"totalTestsNo"`
-	TotalPassedNo int             `json:"totalPassedNo"`
-	TotalFailedNo int             `json:"totalFailedNo"`
-	TotalTime     time.Duration   `json:"totalTime"`
-	Failed        bool            `json:"failed"`
-	Packages      []PackageReport `json:"packages"`
+	Repo          string
+	TotalCoverage float64
+	TotalTestsNo  int
+	TotalPassedNo int
+	TotalFailedNo int
+	TotalTime     time.Duration
+	Failed        bool
+	Packages      []PackageReport
 }
 
 // PackageReport holds info about coverage analysis of specified package.
 type PackageReport struct {
-	Name     string        `json:"name"`
-	Coverage float64       `json:"coverage"`
-	Failed   bool          `json:"failed"`
-	TestsNo  int           `json:"testsNo"`
-	PassedNo int           `json:"passedNo"`
-	FailedNo int           `json:"failedNo"`
-	Time     time.Duration `json:"time"`
+	Name     string
+	Coverage float64
+	Failed   bool
+	TestsNo  int
+	PassedNo int
+	FailedNo int
+	Time     time.Duration
 	Files    map[string]CoverFileReport
 }
 
@@ -89,19 +89,20 @@ type Cursor struct {
 
 // Node represents a node in directory tree. It might be a file or a directory.
 type Node struct {
-	Path       string   `json:"path"`
-	Nodes      []Node   `json:"nodes"`
-	ParentPath string   `json:"parent"`
-	Dir        bool     `json:"dir"`
-	Coverage   float64  `json:"coverage"`
-	TestsNo    int      `json:"testsNo"`
-	FailedNo   int      `json:"failedNo"`
-	PassedNo   int      `json:"passedNo"`
-	IssuesNo   int      `json:"issuesNo"`
-	ErrorsNo   int      `json:"errorsNo"`
-	WarningsNo int      `json:"warningsNo"`
-	Issues     []*Issue `json:"issues"`
-	Content    []byte   `json:"content"`
+	Path       string       `json:"path"`
+	Nodes      []Node       `json:"nodes"`
+	ParentPath string       `json:"parent"`
+	Dir        bool         `json:"dir"`
+	Coverage   float64      `json:"coverage"`
+	Blocks     []CoverBlock `json:"coverBlocks"`
+	TestsNo    int          `json:"testsNo"`
+	FailedNo   int          `json:"failedNo"`
+	PassedNo   int          `json:"passedNo"`
+	IssuesNo   int          `json:"issuesNo"`
+	ErrorsNo   int          `json:"errorsNo"`
+	WarningsNo int          `json:"warningsNo"`
+	Issues     []*Issue     `json:"issues"`
+	Content    []byte       `json:"content"`
 }
 
 // Linter represents linter details. It's used in metalinter.
