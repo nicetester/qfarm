@@ -7,20 +7,23 @@
   </div>
 </h1>
 
-<nav class="tabs">
-    <div class="tab summary-tab" [class.active]="tab === 'summary'" (click)="showSummary()">
-        Summary
-    </div>
-    <div class="tab issues-tab" [class.active]="tab === 'issues'" (click)="showIssues()">
-        Issues
-    </div>
-    <div class="tab files-tab" [class.active]="tab === 'files'" (click)="showFiles()">
-        Files
-    </div>
-</nav>
-
 <div>
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" [class.active]="tab === 'summary'" (click)="showSummary()">
+      <a role="tab" (click)="showSummary()">Summary</a>
+    </li>
+    <li role="presentation" [class.active]="tab === 'issues'" (click)="showIssues()">
+      <a role="tab" (click)="showIssues()">Issues</a>
+    </li>
+    <li role="presentation" [class.active]="tab === 'files'" (click)="showFiles()">
+      <a role="tab" (click)="showFiles()">Files</a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
     <summary-tab *ngIf="tab === 'summary'" [summary]="summary"></summary-tab>
     <issues-tab *ngIf="tab === 'issues'"></issues-tab>
     <files-tab *ngIf="tab === 'files'"></files-tab>
+  </div>
+
 </div>
