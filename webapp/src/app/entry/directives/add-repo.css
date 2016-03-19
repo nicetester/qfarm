@@ -22,11 +22,3 @@
     margin-top: 10px;
     border: solid 1px #005600;
 }
-
-.done {
-    font-weight: bolder;
-}
-
-.linters span {
-    font-size: +1;
-}
