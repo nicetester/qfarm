@@ -112,6 +112,9 @@ func (t *FilesMap) ApplyCover(r *qfarm.CoverageReport) error {
 		for _, p := range r.Packages {
 			if strings.HasSuffix(k, p.Name) {
 				t.FilesMap[k].Coverage = p.Coverage
+				t.FilesMap[k].TestsNo = p.TestsNo
+				t.FilesMap[k].FailedNo = p.FailedNo
+				t.FilesMap[k].PassedNo = p.PassedNo
 				break
 			}
 			for f, v := range p.Files {
@@ -123,5 +126,9 @@ func (t *FilesMap) ApplyCover(r *qfarm.CoverageReport) error {
 			}
 		}
 	}
+	t.FilesMap[t.Root].Coverage = r.TotalCoverage
+	t.FilesMap[t.Root].TestsNo = r.TotalTestsNo
+	t.FilesMap[t.Root].FailedNo = r.TotalFailedNo
+	t.FilesMap[t.Root].PassedNo = r.TotalPassedNo
 	return nil
 }

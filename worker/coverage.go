@@ -34,7 +34,6 @@ func (c *CoverageChecker) Start(cfg qfarm.BuildCfg, ft *FilesMap) error {
 	if report.Failed {
 		return nil
 	}
-
 	if err := ft.ApplyCover(report); err != nil {
 		return err
 	}
@@ -76,7 +75,7 @@ func (c *CoverageChecker) runCoverageAnalysis(cfg qfarm.BuildCfg) (*qfarm.Covera
 		packages[i].Time = time.Now().Sub(start)
 
 		if strings.Contains(testOut, "[no test files]") {
-			c.debug("No tests for package(%s). Continueing", pac.Name)
+			c.debug("No tests for package(%s). Continuing", pac.Name)
 			continue
 		}
 
@@ -220,6 +219,7 @@ func (c *CoverageChecker) runCoverageAnalysis(cfg qfarm.BuildCfg) (*qfarm.Covera
 	if rootTotal > 0 {
 		report.TotalCoverage = float64(rootCovered) / float64(rootTotal) * 100
 	}
+	c.debug("Root total coverage: %f", report.TotalCoverage)
 
 	if report.TotalFailedNo > 0 {
 		report.Failed = true
