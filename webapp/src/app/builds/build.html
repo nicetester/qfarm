@@ -1,9 +1,12 @@
-<div class="build-header">
+<h1 class="page-header">
+  <div>
     {{ summary.repo }} #{{summary.no}}
-    <div class="subtitle">
-        <small>Commit: {{summary.commitHash}}</small>
-    </div>
-</div>
+  </div>
+  <div>
+    <small>Commit: {{summary.commitHash}}</small>
+  </div>
+</h1>
+
 <nav class="tabs">
     <div class="tab summary-tab" [class.active]="tab === 'summary'" (click)="showSummary()">
         Summary

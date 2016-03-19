@@ -1,17 +1,20 @@
 package main
 
 import (
-	"github.com/qfarm/qfarm/redis"
-	"fmt"
 	"flag"
+	"fmt"
+	"github.com/qfarm/qfarm/redis"
 )
 
 var srv *redis.Service
-var repo = flag.String("repo", "github.com/qfarm/bad-go-code", "Repo to analysis")
+var (
+	repo  = flag.String("repo", "github.com/qfarm/bad-go-code", "Repo to analysis")
+	redis = flags.String("redis", "docker:6379", "Redis connection string")
+)
 
 func main() {
 	flag.Parse()
-	cfg := redis.NewConfig().WithConnection("127.0.0.1:6379").WithPassword("")
+	cfg := redis.NewConfig().WithConnection(redis).WithPassword("")
 	var err error
 	srv, err = redis.NewService(cfg)
 	if err != nil {
