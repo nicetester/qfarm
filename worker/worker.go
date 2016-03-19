@@ -32,7 +32,7 @@ func NewWorker(config *Cfg) (*Worker, error) {
 	}
 
 	w.notifier = NewNotifier(w.redis)
-	w.linter = NewMetalinter(config, w.notifier)
+	w.linter = NewMetalinter(config, w.redis, w.notifier)
 	w.coverage = NewCoverageChecker(config, w.notifier)
 
 	return w, nil
@@ -134,7 +134,7 @@ func (w *Worker) analyze(repo string) error {
 	}
 
 	// run all linters
-	if err := w.linter.Start(*buildCfg, ft); err != nil {
+	if err := w.linter.Start(*buildCfg, newBuild.No, ft); err != nil {
 		return err
 	}
 
@@ -154,7 +154,7 @@ func (w *Worker) analyze(repo string) error {
 
 func (w *Worker) getLastBuildInfo(repo string) (qfarm.Build, error) {
 	var build qfarm.Build
-	data, err := w.redis.ListGetLast("builds/" + repo)
+	data, err := w.redis.ListGetLast("builds:" + repo)
 	if err != nil {
 		return build, err
 	}

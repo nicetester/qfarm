@@ -138,6 +138,18 @@ const (
 	Error   Severity = "error"
 )
 
+func (s *Severity) Rank() int {
+	if *s == Warning {
+		return 1
+	}
+
+	if *s == Error {
+		return 2
+	}
+
+	return -1
+}
+
 // Issue represents issue in any of the go file.
 type Issue struct {
 	Linter   *Linter  `json:"linter"`

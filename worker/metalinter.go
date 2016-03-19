@@ -16,6 +16,8 @@ import (
 	"github.com/google/shlex"
 	"github.com/qfarm/qfarm"
 	"log"
+	"github.com/qfarm/qfarm/redis"
+	"encoding/json"
 )
 
 const (
@@ -120,10 +122,11 @@ var (
 type Metalinter struct {
 	cfg      *Cfg
 	notifier *Notifier
+	redis *redis.Service
 }
 
-func NewMetalinter(cfg *Cfg, notifier *Notifier) *Metalinter {
-	return &Metalinter{cfg: cfg, notifier: notifier}
+func NewMetalinter(cfg *Cfg, redis *redis.Service, notifier *Notifier) *Metalinter {
+	return &Metalinter{cfg: cfg, redis: redis, notifier: notifier}
 }
 
 type Severity string
@@ -158,7 +161,7 @@ func LinterFromName(name string) (*qfarm.Linter, error) {
 	}, nil
 }
 
-func (m *Metalinter) Start(cfg qfarm.BuildCfg, ft *FilesMap) error {
+func (m *Metalinter) Start(cfg qfarm.BuildCfg, buildNo int, ft *FilesMap) error {
 	start := time.Now()
 	paths := m.expandPaths([]string{cfg.Path + "/..."}, cfg.SkipDirs)
 
@@ -172,11 +175,25 @@ func (m *Metalinter) Start(cfg qfarm.BuildCfg, ft *FilesMap) error {
 			continue
 		}
 
+		// apply issue to all parents in file tree
 		if err := ft.ApplyIssue(issue); err != nil {
 			return err
 		}
 
-		// TODO: store issues in redis
+		// trim path in json
+		issue.Path = strings.Replace(issue.Path, cfg.Path, "", -1)
+
+		// marshal issue to json
+		data, err := json.Marshal(issue)
+		if err != nil {
+			return err
+		}
+
+		// store issue in global list of issues
+		_, err = m.redis.SortedSetAdd(fmt.Sprintf("issues:%s:%d", cfg.Repo, buildNo), data, issue.Severity.Rank())
+		if err != nil {
+			return err
+		}
 	}
 
 	for err := range errch {

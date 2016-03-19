@@ -335,6 +335,21 @@ func (s *Service) SortedSetRank(key string, value string) (string, error) {
 	return string(reply), nil
 }
 
+// SortedSetAdd adds value to sorted set with the rank.
+// Returns ranking score.
+func (s *Service) SortedSetAdd(key string, value []byte, rank int) (int64, error) {
+	conn := s.rdb.Get()
+	defer conn.Close()
+
+	reply, err := redis.Int64(conn.Do("ZADD", key, rank, value))
+	if err != nil {
+		return -1, fmt.Errorf("can't add value to set %s, key: %s, err: %v", value, key, err)
+	}
+
+	return reply, nil
+}
+
+
 // SortedSetGetAllRev gets all items from the sorted set in reverse order
 // (from highest to lowest rank).
 func (s *Service) SortedSetGetAllRev(key string) ([][]byte, error) {
