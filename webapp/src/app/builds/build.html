@@ -1,8 +1,8 @@
 <div class="build-header">
+    {{ summary.repo }} #{{summary.no}}
     <div class="subtitle">
-        <small>{{summary.path}}</small>
+        <small>Commit: {{summary.commitHash}}</small>
     </div>
-    {{ summary.repoName }} #{{summary.no}}
 </div>
 <nav class="tabs">
     <div class="tab summary-tab" [class.active]="tab === 'summary'" (click)="showSummary()">

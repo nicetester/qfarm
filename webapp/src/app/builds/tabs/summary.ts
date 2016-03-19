@@ -1,4 +1,4 @@
-import { Component } from 'angular2/core';
+import { Component, SimpleChange } from 'angular2/core';
 import { Input } from 'angular2/core'
 
 declare var Highcharts:any;
@@ -13,12 +13,21 @@ export class SummaryTab {
     @Input('summary') summary;
     scoreLevel: string;
 
-    constructor() {
-    }
+    constructor() {}
 
     ngOnInit() {
-        console.log('oninit', this.summary)
+        if (this.summary.score) {
+            this.showScoreChart();
+        }
+    }
 
+    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
+        if (changes['summary'].currentValue && changes['summary'].currentValue['score']) {
+            this.showScoreChart();
+        }
+    }
+
+    showScoreChart() {
         new Highcharts.Chart(document.getElementById('build-score-widget'), {
             chart: {
                 type: 'gauge',
@@ -33,11 +42,10 @@ export class SummaryTab {
             },
 
             pane: {
-                startAngle: -150,
-                endAngle: 150,
+                startAngle: -90,
+                endAngle: 90,
                 background: [{
                     backgroundColor: {
-                        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                         stops: [
                             [0, '#FFF'],
                             [1, '#333']
@@ -47,7 +55,6 @@ export class SummaryTab {
                     outerRadius: '109%'
                 }, {
                     backgroundColor: {
-                        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                         stops: [
                             [0, '#333'],
                             [1, '#FFF']
@@ -55,8 +62,6 @@ export class SummaryTab {
                     },
                     borderWidth: 1,
                     outerRadius: '107%'
-                }, {
-                    // default background
                 }, {
                     backgroundColor: '#DDD',
                     borderWidth: 0,
@@ -105,13 +110,12 @@ export class SummaryTab {
 
             series: [{
                 name: 'Quality Score',
-                data: [80],
+                data: [this.summary.score],
                 tooltip: {
                     valueSuffix: null
                 }
             }]
         });
-
     }
 
 }

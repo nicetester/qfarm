@@ -34,6 +34,7 @@ export class Build {
         console.log(`Loaded Build view for build ${this.repoName}, build #${this.buildId}`);
 
         this._buildsService.getBuildSummary(this.repoName, this.buildId)
+            .map(res => res.json())
             .subscribe(
                 summary => this.summary = summary,
                 err => console.error('err:', err));

@@ -32,15 +32,7 @@ export class BuildsService {
     }
 
     getBuildSummary(repoName: string, buildId: string) {
-        return Rx.Observable.fromPromise(Promise.resolve(
-            {
-                path: 'github.com/qfarm',
-                repoName: 'bad-go-code',
-                no: 123,
-                score: Math.floor(Math.random()*100),
-                time: Date.now()
-            }
-        ));
+        return this.http.get(this.host + 'reports/?repo=github.com/qfarm/bad-go-code/cover');
     }
 
 }
