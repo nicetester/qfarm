@@ -8,7 +8,8 @@ export class WebSocketService {
 
     init() {
         this.socket = Rx.Observable.create(function (obs) {
-            let host = location.hostname.split(/:/)[0];
+            // let host = location.hostname.split(/:/)[0];
+            let host = 'docker';
             let connect = () => {
                 let ws = new WebSocket(`ws://${host}:8081/`);
                 console.log('Websocket: Connecting...')
