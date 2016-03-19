@@ -146,6 +146,10 @@ func (w *Worker) analyze(repo string) error {
 		return err
 	}
 
+	if err := w.storeNodes(buildCfg.Repo, newBuild.No, ft); err != nil {
+		return fmt.Errorf("can't store nodes in Redis: %v", err)
+	}
+
 	root, ok := ft.FilesMap[ft.Root]
 	if !ok {
 		return fmt.Errorf("Can't find root!")
@@ -166,8 +170,8 @@ func (w *Worker) analyze(repo string) error {
 		IssuesNo:          root.IssuesNo,
 		ErrorsNo:          root.ErrorsNo,
 		WarningsNo:        root.WarningsNo,
-		TechnicalDeptCost: root.WarningsNo*10 + root.ErrorsNo*14,
-		TechnicalDeptTime: (time.Duration(root.ErrorsNo*20)*time.Minute + time.Duration(root.WarningsNo*15)*time.Minute).String(),
+		TechnicalDeptCost: root.WarningsNo*CostOfWarning + root.ErrorsNo*CostOfError,
+		TechnicalDeptTime: (time.Duration(root.ErrorsNo*FixTimeOfError)*time.Minute + time.Duration(root.WarningsNo*FixTimeOfWarning)*time.Minute).String(),
 	}
 
 	// store report in redis
@@ -211,9 +215,27 @@ func calculateScore(n *qfarm.Node) int {
 
 	if score < 0 {
 		return 0
-	} else {
-		return score
 	}
+	return score
+}
+
+func (w *Worker) storeNodes(repo string, no int, ft *FilesMap) error {
+	prefix := "files:" + repo
+	for path, node := range ft.FilesMap {
+		if node.Dir {
+			path += "/"
+		}
+		p := strings.TrimPrefix(path, ft.Root)
+		key := fmt.Sprintf("%s:%d:%s", prefix, no, string(p))
+		data, err := json.Marshal(node)
+		if err != nil {
+			return fmt.Errorf("can't marshal node %+v: %v", node, err)
+		}
+		if err := w.redis.Set(key, -1, string(data)); err != nil {
+			return fmt.Errorf("can't set in Redis: %v", err)
+		}
+	}
+	return nil
 }
 
 func (w *Worker) getLastBuildInfo(repo string) (qfarm.Build, error) {

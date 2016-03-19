@@ -5,11 +5,13 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strings"
+
+	"fmt"
+	"strconv"
 
 	"github.com/qfarm/qfarm"
 	"github.com/qfarm/qfarm/redis"
-	"strconv"
-	"fmt"
 )
 
 // Service is an API service with Redis connection.
@@ -31,11 +33,13 @@ func (s *Service) TriggerBuild(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.r.ListPush("test-q-list", build.Repo); err != nil {
+	repo := strings.TrimRight(build.Repo, "/")
+
+	if err := s.r.ListPush("test-q-list", repo); err != nil {
 		writeErrJSON(w, err, http.StatusInternalServerError)
 		return
 	}
-	if err := s.r.Publish("test-q-channel", build.Repo); err != nil {
+	if err := s.r.Publish("test-q-channel", repo); err != nil {
 		writeErrJSON(w, err, http.StatusInternalServerError)
 		return
 	}
