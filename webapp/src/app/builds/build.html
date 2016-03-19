@@ -26,8 +26,8 @@
   <div class="tab-content">
     <summary-tab *ngIf="tab === 'summary'" [summary]="summary"></summary-tab>
     <issues-tab *ngIf="tab === 'issues'" [summary]="summary"></issues-tab>
-    <files-tab *ngIf="tab === 'files'" [summary]="summary"></files-tab>
-    <builds-tab *ngIf="tab === 'builds'" [summary]="summary"></builds-tab>
+    <files-tab *ngIf="tab === 'files'" [summary]="summary" [file]="file" ></files-tab>
+    <builds-tab *ngIf="tab === 'builds'" [summary]="summary" (exitFileView)="showFiles()"></builds-tab>
   </div>
 
 </div>

@@ -1,0 +1,12 @@
+.breadcrumbs {
+    padding: 10px;
+}
+.breadcrumbs .back {
+    margin-right: 10px;
+}
+.file-link {
+    cursor: pointer;
+}
+.file-link:hover {
+    color: blue;
+}

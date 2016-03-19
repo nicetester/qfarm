@@ -1,5 +1,5 @@
 import { Component } from 'angular2/core'
-import { RouteParams } from 'angular2/router';
+import { Router, RouteParams } from 'angular2/router';
 
 import { SummaryTab } from './tabs/summary'
 import { IssuesTab } from './tabs/issues'
@@ -22,13 +22,21 @@ export class Build {
     tab: string = "summary"
 
     summary: any = {};
+    file: string;
 
     constructor(
         private _routeParams: RouteParams,
         private _buildsService: BuildsService
+        private _router: Router
     ) {
         this.repoName = _routeParams.get('repoName');
         this.buildId = _routeParams.get('buildId');
+
+        this.file = _routeParams.get('file');
+        if (this.file) {
+            this.file = '/' + this.file.replace(/:/g, '/');
+            this.showFiles();
+        }
     }
 
     ngOnInit() {
@@ -47,6 +55,7 @@ export class Build {
     }
     showFiles() {
         this.tab = 'files';
+        this._router.navigate(['Build', {repoName: this.repoName, buildId: this.buildId}]);
     }
     showIssues() {
         this.tab = 'issues';
