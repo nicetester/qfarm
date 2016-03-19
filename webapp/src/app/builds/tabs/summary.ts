@@ -28,92 +28,85 @@ export class SummaryTab {
     }
 
     showScoreChart() {
-        new Highcharts.Chart(document.getElementById('score-chart'), {
+        new Highcharts.Chart('score-chart', {
+
             chart: {
-                type: 'gauge',
-                plotBackgroundColor: null,
-                plotBackgroundImage: null,
-                plotBorderWidth: 0,
-                plotShadow: false
+              type: 'solidgauge',
+              marginTop: 20
             },
 
             title: null,
 
-            pane: {
-                startAngle: -90,
-                endAngle: 90,
-                background: [{
-                    backgroundColor: {
-                        stops: [
-                            [0, '#FFF'],
-                            [1, '#333']
-                        ]
-                    },
-                    borderWidth: 0,
-                    outerRadius: '109%'
-                }, {
-                    backgroundColor: {
-                        stops: [
-                            [0, '#333'],
-                            [1, '#FFF']
-                        ]
-                    },
-                    borderWidth: 1,
-                    outerRadius: '107%'
-                }, {
-                    backgroundColor: '#DDD',
-                    borderWidth: 0,
-                    outerRadius: '105%',
-                    innerRadius: '103%'
-                }]
+            tooltip: {
+              borderWidth: 0,
+              backgroundColor: 'none',
+              shadow: false,
+              style: {
+                fontSize: '16px'
+              },
+              pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}%</span>',
+              positioner: function (labelWidth, labelHeight) {
+                return {
+                  x: 190 - labelWidth / 2,
+                  y: 150
+                };
+              }
             },
 
-            // the value axis
+            pane: {
+              startAngle: 0,
+              endAngle: 360,
+              background: [{ // Track for Score
+                outerRadius: '112%',
+                innerRadius: '88%',
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+                borderWidth: 0
+              }, { // Track for Coverage
+                outerRadius: '87%',
+                innerRadius: '63%',
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[1]).setOpacity(0.3).get(),
+                borderWidth: 0
+              }]
+            },
+
             yAxis: {
-                min: 0,
-                max: 100,
+              min: 0,
+              max: 100,
+              lineWidth: 0,
+              tickPositions: []
+            },
 
-                minorTickInterval: 'auto',
-                minorTickWidth: 1,
-                minorTickLength: 10,
-                minorTickPosition: 'inside',
-                minorTickColor: '#666',
-
-                tickPixelInterval: 30,
-                tickWidth: 2,
-                tickPosition: 'inside',
-                tickLength: 10,
-                tickColor: '#666',
-                labels: {
-                    step: 2,
-                    rotation: 'auto'
+            plotOptions: {
+              solidgauge: {
+                borderWidth: '15px',
+                dataLabels: {
+                  enabled: false
                 },
-                title: {
-                    text: null
-                },
-                plotBands: [{
-                    from: 0,
-                    to: 60,
-                    color: '#DF5353' // green
-                }, {
-                    from: 60,
-                    to: 80,
-                    color: '#DDDF0D' // yellow
-                }, {
-                    from: 80,
-                    to: 100,
-                    color: '#55BF3B' // red
-                }]
+                linecap: 'round',
+                stickyTracking: false
+              }
             },
 
             series: [{
-                name: 'Quality Score',
-                data: [this.summary.score],
-                tooltip: {
-                    valueSuffix: null
-                }
+              name: 'Score',
+              borderColor: Highcharts.getOptions().colors[0],
+              data: [{
+                color: Highcharts.getOptions().colors[0],
+                radius: '100%',
+                innerRadius: '100%',
+                y: this.summary.score
+              }]
+            }, {
+              name: 'Coverage',
+              borderColor: Highcharts.getOptions().colors[1],
+              data: [{
+                color: Highcharts.getOptions().colors[1],
+                radius: '75%',
+                innerRadius: '75%',
+                y: Number((this.summary.coverage).toFixed(2))
+              }]
             }]
-        });
+          });
     }
 
 }
