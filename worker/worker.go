@@ -176,7 +176,7 @@ func (w *Worker) analyze(repo string) error {
 		return err
 	}
 
-	if err := w.redis.Set(fmt.Sprintf("report:%s:%d", newBuild.Repo, newBuild.No), -1, rData); err != nil {
+	if err := w.redis.Set(fmt.Sprintf("reports:%s:%d", newBuild.Repo, newBuild.No), -1, rData); err != nil {
 		return err
 	}
 

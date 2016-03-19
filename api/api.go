@@ -121,6 +121,42 @@ func (s *Service) UserRepos(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func (s *Service) Report(w http.ResponseWriter, req *http.Request) {
+	repo := req.URL.Query().Get("repo")
+	if repo == "" {
+		writeErrJSON(w, errors.New("Repo should be set!"), http.StatusBadRequest)
+		return
+	}
+
+	var err error
+	buildNoInt := 0
+	buildNo := req.URL.Query().Get("no")
+	if buildNo == "" {
+		buildNoInt, err = s.getLastBuildNo(repo)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusInternalServerError)
+			return
+		}
+	} else {
+		buildNoInt, err = strconv.Atoi(buildNo)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusBadRequest)
+			return
+		}
+	}
+
+	reportJson, err := s.r.Get(fmt.Sprintf("reports:%s:%d", repo, buildNoInt))
+	if err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	if _, err := w.Write(reportJson); err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+	}
+}
+
 // RepoIssues returns list of specified repo issues.
 func (s *Service) RepoIssues(w http.ResponseWriter, req *http.Request) {
 	repo := req.URL.Query().Get("repo")
