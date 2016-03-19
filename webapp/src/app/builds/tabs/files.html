@@ -34,9 +34,27 @@
         <span class="path">{{file.path}}</span>
     </div>
     <div class="file-content">
-        <div class="file-line" *ngFor="#line of file.decodedContent; #i=index">
+        <div class="file-line"
+             *ngFor="#line of file.decodedContent; #i=index"
+             [style.margin-bottom]="50 * getLineIssues(i).length+'px'"
+        >
             <pre class="file-line-number">{{i+1}}</pre>
             <pre class="file-line-content">{{ line }}</pre>
+            <div *ngIf="getLineIssues(i).length">
+                <section class="issues-panel">
+	                  <table class="table">
+		                    <tbody>
+			                      <tr *ngFor="#issue of getLineIssues(i)"
+                                [class.warning]="issue.severity === 'warning'"
+                                [class.danger]="issue.severity === 'error'">
+				                        <td class="linter-cell">{{issue.linter}}</td>
+				                        <td class="locaion-cell">{{issue.path}}#{{issue.line}}:{{issue.col}}</td>
+				                        <td class="message-cell">{{issue.message}}</td>
+			                      </tr>
+		                    </tbody>
+	                  </table>
+                </section>
+            </div>
         </div>
     </div>
 </section>

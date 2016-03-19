@@ -69,4 +69,17 @@ export class FilesTab {
         this.exitFileView.emit('any');
     }
 
+    getLineIssues(lineNo) {
+        var issues = [];
+        console.log(this.file.issues);
+        for (var i of this.file.issues) {
+            console.log(lineNo, i.line);
+            if (i.line === lineNo) {
+                issues.push(i);
+            }
+        }
+        console.log('issues', issues);
+        return issues;
+    }
+
 }
