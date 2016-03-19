@@ -34,6 +34,9 @@
         <span class="path">{{file.path}}</span>
     </div>
     <div class="file-content">
-        <pre>{{ file.decodedContent }}</pre>
+        <div class="file-line" *ngFor="#line of file.decodedContent; #i=index">
+            <pre class="file-line-number">{{i+1}}</pre>
+            <pre class="file-line-content">{{ line }}</pre>
+        </div>
     </div>
 </section>

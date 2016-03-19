@@ -52,21 +52,21 @@ export class FilesTab {
         for (var f of this.files) {
             if (f.path === this.filePath) {
                 this.file = f;
-                this.file.decodedContent = atob(this.file.content);
+                this.file.decodedContent = atob(this.file.content).split('\n');
             }
         }
     }
 
     showFile(file) {
         if(!file.dir) {
-          this.filePath = file.path.slice(0);
+            this.filePath = file.path.slice(0);
             this.getFile();
         }
     }
 
     backToFiles() {
         this.file = null;
-        this.exitFileView.emit();
+        this.exitFileView.emit('any');
     }
 
 }

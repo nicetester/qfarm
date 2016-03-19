@@ -26,7 +26,7 @@ export class Build {
 
     constructor(
         private _routeParams: RouteParams,
-        private _buildsService: BuildsService
+        private _buildsService: BuildsService,
         private _router: Router
     ) {
         this.repoName = _routeParams.get('repoName');
