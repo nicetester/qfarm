@@ -64,6 +64,10 @@ func (s *Service) LastBuilds(w http.ResponseWriter, req *http.Request) {
 		lastBuilds = append(lastBuilds, single)
 	}
 
+	for i, j := 0, len(lastBuilds)-1; i < j; i, j = i+1, j-1 {
+		lastBuilds[i], lastBuilds[j] = lastBuilds[j], lastBuilds[i]
+	}
+
 	if err := writeJSON(w, lastBuilds); err != nil {
 		writeErrJSON(w, err, http.StatusInternalServerError)
 		return
@@ -93,6 +97,10 @@ func (s *Service) LastRepoBuilds(w http.ResponseWriter, req *http.Request) {
 		}
 
 		lastBuilds = append(lastBuilds, single)
+	}
+
+	for i, j := 0, len(lastBuilds)-1; i < j; i, j = i+1, j-1 {
+		lastBuilds[i], lastBuilds[j] = lastBuilds[j], lastBuilds[i]
 	}
 
 	if err := writeJSON(w, lastBuilds); err != nil {
