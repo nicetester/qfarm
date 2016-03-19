@@ -6,7 +6,10 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "highcharts/highcharts.d.ts": {
-       "commit": "552fe5d3e45ef9c8ecd3eda2b6a24d2546c438f4"
+      "commit": "552fe5d3e45ef9c8ecd3eda2b6a24d2546c438f4"
+    },
+    "underscore/underscore.d.ts": {
+      "commit": "c4309e0e646ec024537c0806c6a31d199aa68df6"
     }
   }
 }
