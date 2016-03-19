@@ -31,9 +31,6 @@ func (c *CoverageChecker) Start(cfg qfarm.BuildCfg, ft *FilesMap) error {
 
 	c.notifier.SendEvent(cfg.Repo, fmt.Sprintf("Coverage for repo %s done", cfg.Repo), EventTypeCoverageDone)
 
-	if report.Failed {
-		return nil
-	}
 	if err := ft.ApplyCover(report); err != nil {
 		return err
 	}
