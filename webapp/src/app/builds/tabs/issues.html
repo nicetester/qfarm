@@ -1,34 +1,29 @@
-<section class="issues-filters">
-  <label>
-    <input #angularcb type="checkbox" [(ngModel)]="warns" (change)="warns = !warns; getIssues()"/>
-    Warnings
-  </label>
-  <label>
-    <input #angularcb type="checkbox" [(ngModel)]="errors" (change)="errors = !errors; getIssues()"/>
-    Errors
-  </label>
-</section>
+<div class="row row-padded">
+  <div class="col-md-12">
+	  <form role="form">
+	  	<label class="checkbox-inline"><input #angularcb type="checkbox" [(ngModel)]="warns" (change)="warns = !warns; getIssues()">Warnings</label>
+	  	<label class="checkbox-inline"><input #angularcb type="checkbox" [(ngModel)]="errors" (change)="errors = !errors; getIssues()">Errors</label>
+	  </form>
+  </div>
+</div>
 
 <section class="issues-panel">
-    <div *ngFor="#issue of issues"
-         class="issue-card"
-         [class.error]="issue.severity === 'error'"
-         [class.warning]="issue.severity === 'warning'" >
-        <div class="icon">
-            <i *ngIf="issue.severity === 'error'" class="fa fa-exclamation-circle"></i>
-            <i *ngIf="issue.severity === 'warning'" class="fa fa-exclamation-triangle"></i>
-        </div>
-        <div class="body">
-            <div class="header">
-                <span class="linter">{{issue.linter}}</span>
-                <span class="message">{{issue.message}}</span>
-            </div>
-            <div class="details">
-                Location: {{issue.path}}:{{issue.line}}:{{issue.col}}
-            </div>
-        </div>
-        <div class="goto-link">
-            <i class="fa fa-chevron-right"></i>
-        </div>
-    </div>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Linter</th>
+				<th>File</th>
+				<th>Message</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="#issue of issues"
+				[class.warning]="issue.severity === 'warning'"
+				[class.danger]="issue.severity === 'error'">
+				<td>{{issue.linter}}</td>
+				<td>{{issue.path}}#{{issue.line}}:{{issue.col}}</td>
+				<td>{{issue.message}}</td>
+			</tr>
+		</tbody>
+	</table>
 </section>
