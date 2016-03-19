@@ -1,10 +1,10 @@
 <section class="issues-filters">
   <label>
-    <input #angularcb type="checkbox" [(ngModel)]="warns"/>
+    <input #angularcb type="checkbox" [(ngModel)]="warns" (change)="warns = !warns; getIssues()"/>
     Warnings
   </label>
   <label>
-    <input #angularcb type="checkbox" [(ngModel)]="errors"/>
+    <input #angularcb type="checkbox" [(ngModel)]="errors" (change)="errors = !errors; getIssues()"/>
     Errors
   </label>
 </section>

@@ -30,14 +30,6 @@ export class IssuesTab {
       if (changes['summary'].currentValue && changes['summary'].currentValue['repo']) {
         this.getIssues();
       }
-
-      if (changes['warns']) {
-        this.getIssues();
-      }
-
-      if (changes['errors']) {
-        this.getIssues();
-      }
     }
 
     getIssues() {
