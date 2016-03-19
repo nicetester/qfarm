@@ -1,4 +1,4 @@
-import { Component } from 'angular2/core';
+import { Component, SimpleChange } from 'angular2/core';
 import { Input } from 'angular2/core'
 
 import { IssuesService } from '../../services/issues.service';
@@ -33,16 +33,16 @@ export class IssuesTab {
     }
 
     getIssues() {
-      if this.warns && this.errors {
+      if (this.warns && this.errors) {
         this.filter = ""
       }
-      if this.warns && !this.errors {
+      if (this.warns && !this.errors) {
         this.filter = "warning"
       }
-      if !this.warns && this.errors {
+      if (!this.warns && this.errors) {
         this.filter = "error"
       }
-      if !this.warns && !this.errors {
+      if (!this.warns && !this.errors) {
         this.filter = "none"
       }
 

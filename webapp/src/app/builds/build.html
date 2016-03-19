@@ -23,7 +23,7 @@
   <div class="tab-content">
     <summary-tab *ngIf="tab === 'summary'" [summary]="summary"></summary-tab>
     <issues-tab *ngIf="tab === 'issues'" [summary]="summary"></issues-tab>
-    <files-tab *ngIf="tab === 'files'"></files-tab>
+    <files-tab *ngIf="tab === 'files'" [summary]="summary"></files-tab>
   </div>
 
 </div>
