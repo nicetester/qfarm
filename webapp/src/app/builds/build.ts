@@ -4,6 +4,7 @@ import { RouteParams } from 'angular2/router';
 import { SummaryTab } from './tabs/summary'
 import { IssuesTab } from './tabs/issues'
 import { FilesTab } from './tabs/files'
+import { BuildsTab } from './tabs/builds'
 
 import { BuildsService } from '../services/builds.service';
 
@@ -11,7 +12,7 @@ import { BuildsService } from '../services/builds.service';
     selector: 'build-resuts',
     template: require('./build.html'),
     styles: [require('./build.css')],
-    directives: [SummaryTab, IssuesTab, FilesTab],
+    directives: [SummaryTab, IssuesTab, FilesTab, BuildsTab],
     providers: [BuildsService]
 })
 export class Build {
@@ -49,6 +50,9 @@ export class Build {
     }
     showIssues() {
         this.tab = 'issues';
+    }
+    showBuilds() {
+        this.tab = 'builds';
     }
 
 }

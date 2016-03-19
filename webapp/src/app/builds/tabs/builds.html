@@ -1,0 +1,19 @@
+
+<section class="builds-panel">
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Builds</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="#b of buildsList">
+      <td>
+        <a href="{{ b.link }}">
+          <i class="fa fa-github"></i>&nbsp;{{b.no}}#&nbsp;{{b.repo}}
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</section>
