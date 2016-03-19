@@ -1,5 +1,8 @@
 <div>
-    <input type="text" [(ngModel)]="repoName"/>
+    <input type="text" [(ngModel)]="repoName" class="reponame-input" (keyup.enter)="startBuild()" />
 
-    <button (click)="startBuild()" >Go!</button>
+    <div class="trigger-button" (click)="startBuild()">
+        Go
+    </div>
+
 </div>

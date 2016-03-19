@@ -1,0 +1,39 @@
+.dashboard {
+    width: 960px;
+    margin: 20px auto;
+}
+
+.widget {
+    border-radius: 20px;
+    height: 80px;
+    width: 240px;
+    display: inline-block;
+    text-align: center;
+    transition: all .2s ease-in-out;
+}
+
+.widget:hover {
+    transform: scale(1.5);
+    box-shadow: 0 10px 10px;
+}
+
+.score-widget {
+    background: rgb(200,200,200);
+    border: solid 1px black;
+}
+.score-widget .score {
+    font-size: 3rem;
+    font-weight: bold;
+}
+.score-widget.good {
+    background-color: #AEFFA0;
+    color: #4C8C26;
+}
+.score-widget.average {
+    background-color: #FFF4A0;
+    color: #B5A518;
+}
+.score-widget.bad {
+    background-color: #FFA0A0;
+    color: #E00000;
+}

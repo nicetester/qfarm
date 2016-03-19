@@ -1,0 +1,19 @@
+header, footer {
+    background-color: hsla(0,0%,90%,1);
+    text-align: center;
+}
+
+header {
+    height: 50px;
+    font-size: 30px;
+    line-height: 45px;
+}
+
+footer {
+    bottom: 0;
+    height: 20px;
+    font-size: 12px;
+    line-height: 18px;
+    position: absolute;
+    width: 100%;
+}

@@ -2,17 +2,35 @@ import { Injectable } from 'angular2/core';
 import { Http } from 'angular2/http';
 import * as Rx from 'rxjs';
 
-import { Build } from './Build'
-
 @Injectable()
-export class BuildsService {
+export class IssuesService {
 
-    getAllBuilds() {
+    getAllIssues(repoName: string, buildId: stirng, first: number, limit: number) {
         return Rx.Observable.fromPromise(Promise.resolve([
-            new Build(3, 'userA/repoX'),
-            new Build(1, 'userB/repoY'),
-            new Build(2, 'userA/repoX'),
-            new Build(1, 'userA/repoX')
+            {
+                file: 'path/to/file',
+                line: 612,
+                message: 'error: error not found',
+                level: 'major'
+            },
+            {
+                file: 'path/to/file',
+                line: 612,
+                message: 'error: error not found',
+                level: 'minor'
+            },
+            {
+                file: 'path/to/file',
+                line: 612,
+                message: 'error: error not found',
+                level: 'major'
+            },
+            {
+                file: 'path/to/file',
+                line: 612,
+                message: 'error: error not found',
+                level: 'major'
+            },
         ]));
     }
 
