@@ -39,7 +39,7 @@
         <div class="title">
             Linters
         </div>
-        <div class="badge linter-badge" *ngFor="#l of lintersList" [class.inactive]="!l.ran">
+        <div class="badge linter-badge" *ngFor="#l of lintersList" [class.active]="l.ran">
             {{l.name}}
         </div>
     </div>
