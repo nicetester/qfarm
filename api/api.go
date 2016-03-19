@@ -8,6 +8,8 @@ import (
 
 	"github.com/qfarm/qfarm"
 	"github.com/qfarm/qfarm/redis"
+	"strconv"
+	"fmt"
 )
 
 // Service is an API service with Redis connection.
@@ -119,6 +121,85 @@ func (s *Service) UserRepos(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// RepoIssues returns list of specified repo issues.
+func (s *Service) RepoIssues(w http.ResponseWriter, req *http.Request) {
+	repo := req.URL.Query().Get("repo")
+	if repo == "" {
+		writeErrJSON(w, errors.New("Repo should be set!"), http.StatusBadRequest)
+		return
+	}
+
+	var err error
+	buildNoInt, sizeInt, skipInt := 0, 50, 0
+	buildNo := req.URL.Query().Get("no")
+	if buildNo == "" {
+		buildNoInt, err = s.getLastBuildNo(repo)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusInternalServerError)
+			return
+		}
+	} else {
+		buildNoInt, err = strconv.Atoi(buildNo)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusBadRequest)
+			return
+		}
+	}
+
+	size := req.URL.Query().Get("size")
+	if size == "" {
+
+	} else {
+		sizeInt, err = strconv.Atoi(size)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusBadRequest)
+			return
+		}
+	}
+
+	skip := req.URL.Query().Get("skip")
+	if skip != "" {
+		skipInt, err = strconv.Atoi(skip)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusBadRequest)
+			return
+		}
+	}
+
+	data := make([][]byte, 0)
+	filter := req.URL.Query().Get("filter")
+	if filter != "" {
+		data, err = s.r.SortedSetGet(fmt.Sprintf("issues:%s:%d:%s", repo, buildNoInt, filter), sizeInt, skipInt)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusInternalServerError)
+			return
+		}
+	} else {
+		data, err = s.r.SortedSetGet(fmt.Sprintf("issues:%s:%d", repo, buildNoInt), sizeInt, skipInt)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusInternalServerError)
+			return
+		}
+	}
+
+	issues := make([]qfarm.Issue, 0)
+	for _, b := range data {
+		var single qfarm.Issue
+		single.Linter = new(qfarm.Linter)
+		if err := json.Unmarshal(b, &single); err != nil {
+			writeErrJSON(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		issues = append(issues, single)
+	}
+
+	if err := writeJSON(w, issues); err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+}
+
 // writeErrJSON wraps error in JSON structure.
 func writeErrJSON(w http.ResponseWriter, err error, status int) {
 	log.Print(err.Error())
@@ -145,4 +226,18 @@ func writeJSON(w http.ResponseWriter, response interface{}) error {
 	}
 
 	return nil
+}
+
+func (s *Service) getLastBuildNo(repo string) (int, error) {
+	var build qfarm.Build
+	data, err := s.r.ListGetLast("builds:" + repo)
+	if err != nil {
+		return -1, err
+	}
+
+	if err := json.Unmarshal(data.([]byte), &build); err != nil {
+		return -1, err
+	}
+
+	return build.No, nil
 }

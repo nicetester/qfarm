@@ -194,6 +194,12 @@ func (m *Metalinter) Start(cfg qfarm.BuildCfg, buildNo int, ft *FilesMap) error 
 		if err != nil {
 			return err
 		}
+
+		// store issue in specified list of issues
+		_, err = m.redis.SortedSetAdd(fmt.Sprintf("issues:%s:%d:%s", cfg.Repo, buildNo, issue.Severity), data, issue.Severity.Rank())
+		if err != nil {
+			return err
+		}
 	}
 
 	for err := range errch {

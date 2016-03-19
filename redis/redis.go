@@ -368,3 +368,22 @@ func (s *Service) SortedSetGetAllRev(key string) ([][]byte, error) {
 	log.Printf("Getting from redis: %s\n", key)
 	return entries, nil
 }
+
+// SortedSetGet gets specified number of items with a skip option.
+// (from highest to lowest rank).
+func (s *Service) SortedSetGet(key string, size, skip int) ([][]byte, error) {
+	conn := s.rdb.Get()
+	defer conn.Close()
+
+	entries, err := redis.ByteSlices(conn.Do("ZREVRANGE", key, skip, skip-1+size))
+	if err != nil {
+		if err == redis.ErrNil {
+			return nil, ErrNotFound
+		}
+
+		return nil, fmt.Errorf("error while poping data from redis: %v", err)
+	}
+
+	log.Printf("Getting from redis: %s\n", key)
+	return entries, nil
+}

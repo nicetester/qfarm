@@ -76,7 +76,7 @@ func (w *Worker) analyze(repo string) error {
 		return err
 	}
 
-	fmt.Printf("Hash of last commit %s\n", lastCommitHash)
+	log.Printf("Hash of last commit %s", lastCommitHash)
 
 	// get last build number
 	firstTimeBuild := false
