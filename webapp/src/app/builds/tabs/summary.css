@@ -9,16 +9,13 @@
     display: inline-block;
     text-align: center;
     transition: all .2s ease-in-out;
-}
-
-.widget:hover {
-    transform: scale(1.5);
-    box-shadow: 0 10px 10px;
+    border: solid 1px black;
+    float: left;
+    margin: 0 5px;
 }
 
 .score-widget {
     background: rgb(200,200,200);
-    border: solid 1px black;
 }
 .score-widget .score {
     font-size: 3rem;
@@ -35,4 +32,23 @@
 .score-widget.bad {
     background-color: #FFA0A0;
     color: #E00000;
+}
+
+.tests-widget {
+    font-size: 3rem;
+    line-height: 10rem;
+}
+.tests-widget .title {
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+}
+.tests-widget .test-details {
+    font-size: 1.2rem;
+    line-height: 1.5rem;
+}
+.tests-widget .passing {
+    color: green;
+}
+.tests-widget .failing {
+    color: red;
 }
