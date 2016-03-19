@@ -32,8 +32,9 @@ export class Build {
 
     ngOnInit() {
         console.log(`Loaded Build view for build ${this.repoName}, build #${this.buildId}`);
+        let realRepoName = this.repoName.replace(/:/g, '/');
 
-        this._buildsService.getBuildSummary(this.repoName, this.buildId)
+        this._buildsService.getBuildSummary(realRepoName, this.buildId)
             .map(res => res.json())
             .subscribe(
                 summary => this.summary = summary,
