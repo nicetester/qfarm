@@ -11,7 +11,7 @@ export class SummaryTab {
 
     @Input('summary') summary;
     scoreLevel: string;
-    lintersList: [];
+    lintersList = [];
 
     constructor() {}
 

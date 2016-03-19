@@ -53,7 +53,7 @@
 }
 .linter-badge {
     background-color: lavender;
-    color: hsla(240,67%,67%,1);
+    color: hsla(240, 67%, 67%, 1);
     margin: 4px;
 }
 .linter-badge.inactive {
