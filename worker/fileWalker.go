@@ -108,9 +108,10 @@ func (t *FilesMap) ApplyIssue(i *qfarm.Issue) error {
 }
 
 func (t *FilesMap) ApplyCover(r *qfarm.CoverageReport) error {
-	for k := range t.FilesMap {
+	for k, fm := range t.FilesMap {
+	packages:
 		for _, p := range r.Packages {
-			if strings.HasSuffix(k, p.Name) {
+			if fm.Dir && strings.HasSuffix(k, p.Name) {
 				t.FilesMap[k].Coverage = p.Coverage
 				t.FilesMap[k].TestsNo = p.TestsNo
 				t.FilesMap[k].FailedNo = p.FailedNo
@@ -122,7 +123,7 @@ func (t *FilesMap) ApplyCover(r *qfarm.CoverageReport) error {
 				if strings.HasSuffix(k, path) {
 					t.FilesMap[k].Coverage = v.Coverage
 					t.FilesMap[k].Blocks = v.Blocks[:]
-					break
+					break packages
 				}
 			}
 		}
