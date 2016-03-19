@@ -8,7 +8,7 @@ export class WebSocketService {
 
     init() {
         this.socket = Rx.Observable.create(function (obs) {
-            let host = '192.168.99.100';
+            let host = location.hostname.split(/:/)[0];
             let connect = () => {
                 let ws = new WebSocket(`ws://${host}:8081/`);
                 console.log('Websocket: Connecting...')
