@@ -12,6 +12,12 @@
     </p>
   </div>
 
+  <div class="alert alert-danger text-left" role="alert" [class.hidden]="!events['error']">
+    <i class="fa fa-exclamation-triangle"></i>
+    <span class="sr-only">Error:</span>
+    Something went wrong. Please try again later.
+  </div>
+
   <div [class.hidden]="!events['in-progress']" class="text-center linters">
     <span class="badge linter-badge" [class.active]="events['aligncheck-done']">Aligncheck</span>
 	<span class="badge linter-badge" [class.active]="events['deadcode-done']">Deadcode</span>

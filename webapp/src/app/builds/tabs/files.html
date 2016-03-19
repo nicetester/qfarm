@@ -1,4 +1,4 @@
-<section class="files-panel">
+<section class="files-panel" *ngIf="!file">
 	<table class="table">
 		<thead>
 			<tr>
@@ -10,11 +10,30 @@
 		</thead>
 		<tbody>
 			<tr *ngFor="#file of files">
-				<td><i class="fa fa-folder-open" *ngIf="file.dir === true"></i></td>
-				<td>{{file.path}}</td>
+				<td></td>
+			    <td>
+              <span class="file-link" *ngIf="!file.dir" (click)="showFile(file)" >{{file.path}}</span>
+              <span class="dir-link" *ngIf="file.dir"><i class="fa fa-folder-open" *ngIf="file.dir === true"></i>{{file.path}}</span>
+          </td>
 				<td>{{file.coverage / 100 | percent}}</td>
 				<td>{{file.issuesNo}}</td>
 			</tr>
 		</tbody>
 	</table>
+</section>
+
+<section class="file-view" *ngIf="file">
+    <div class="breadcrumbs">
+        <span class="back">
+            <button type="button" class="btn btn-primary" (click)="backToFiles()">
+                <i class="fa fa-chevron-left"></i>
+                Back to file list
+            </button>
+        </span>
+
+        <span class="path">{{file.path}}</span>
+    </div>
+    <div class="file-content">
+        <pre>{{ file.decodedContent }}</pre>
+    </div>
 </section>

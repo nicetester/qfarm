@@ -18,7 +18,7 @@
         </div>
         <div class="test-details">
             <div class="passing">Passing: {{summary.passedNo}}</div>
-            <div class="failing" *ngIf="!summary.failedNo">Failing: {{summary.failedNo}}</div>
+            <div class="failing" *ngIf="summary.failedNo">Failing: {{summary.failedNo}}</div>
             <div class="total">Total: {{summary.testsNo}}</div>
         </div>
     </div>
