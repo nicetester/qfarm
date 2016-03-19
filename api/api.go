@@ -293,6 +293,58 @@ func (s *Service) RepoFiles(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func (s *Service) Badge(w http.ResponseWriter, req *http.Request) {
+	repo := req.URL.Query().Get("repo")
+	if repo == "" {
+		writeErrJSON(w, errors.New("Repo should be set!"), http.StatusBadRequest)
+		return
+	}
+
+	// get last report for spefied repo
+	buildNoInt, err := s.getLastBuildNo(repo)
+	if err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	reportJson, err := s.r.Get(fmt.Sprintf("reports:%s:%d", repo, buildNoInt))
+	if err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	var r qfarm.Report
+	if err = json.Unmarshal(reportJson, &r); err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	color := ""
+	if r.Score > 80 {
+		color = `#4CAF50`
+	} else if r.Score > 60 {
+		color = `#FFC107`
+	} else {
+		color = `#F44336`
+	}
+
+	badge := fmt.Sprintf(`
+		<svg xmlns="http://www.w3.org/2000/svg" width="105" height="20">
+		 <rect fill="#555" height="20" width="75"/>
+		 <rect fill="%s" x="75" height="20" width="30"/>
+		 <path fill-opacity=".1" d="M0 0h179v20h-179z"/>
+		 <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+		  <text x="40" y="14">Quality</text>
+		  <text x="90" y="14">%d</text>
+		 </g>
+		</svg>`, color, r.Score)
+
+	w.Header().Set("Content-Type", "image/svg+xml")
+	if _, err := w.Write([]byte(badge)); err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+	}
+}
+
 // writeErrJSON wraps error in JSON structure.
 func writeErrJSON(w http.ResponseWriter, err error, status int) {
 	log.Print(err.Error())

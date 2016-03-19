@@ -32,6 +32,7 @@ func main() {
 	router.HandleFunc("/issues/", as.RepoIssues).Methods("GET")
 	router.HandleFunc("/files/", as.RepoFiles).Methods("GET")
 	router.HandleFunc("/reports/", as.Report).Methods("GET")
+	router.HandleFunc("/badges/", as.Badge).Methods("GET")
 
 	http.Handle("/", handlers.CORS()(router))
 	log.Printf("Starting to serve on %s", *listen)
