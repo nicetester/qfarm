@@ -1,3 +1,14 @@
+<section class="issues-filters">
+  <label>
+    <input #angularcb type="checkbox" [(ngModel)]="warns"/>
+    Warnings
+  </label>
+  <label>
+    <input #angularcb type="checkbox" [(ngModel)]="errors"/>
+    Errors
+  </label>
+</section>
+
 <section class="issues-panel">
     <div *ngFor="#issue of issues"
          class="issue-card"

@@ -7,7 +7,7 @@ import (
 )
 
 var srv *redis.Service
-var repo = flag.String("repo", "github.com/qfarm/bad-go-code", "Repo to analysis")
+var repo = flag.String("repo", "github.com/qfarm/bad-go-code/cover", "Repo to analysis")
 
 func main() {
 	flag.Parse()

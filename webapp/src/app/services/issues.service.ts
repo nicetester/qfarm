@@ -9,8 +9,8 @@ export class IssuesService {
 
     constructor(private http: Http){}
 
-    getAllIssues(repoName: string, buildId: string, first: number, limit: number) {
-        return this.http.get(this.host + 'issues/?repo=github.com/qfarm/bad-go-code&filter=error&skip=0&size=10');
+    getAllIssues(repoName: string, buildId: string, skip: number, size: number, filter: string) {
+        return this.http.get(this.host + 'issues/?repo=' + repoName + '&filter=' + filter + '&skip=' + skip + '&size=' + size+ '&no=' + buildId);
     }
 
 
