@@ -1,16 +1,11 @@
 .linter-badge {
     text-transform: capitalize;
-    background-color: lavender;
-    color: hsla(240, 67%, 67%, 1);
+    background-color: #DADADA;
+    color: grey;
     margin: 4px;
 }
 
-.linter-badge.done {
+.linter-badge.active {
     background-color: green;
     color: white;
-}
-
-.linter-badge.inactive {
-    background-color: #DADADA;
-    color: grey;
 }

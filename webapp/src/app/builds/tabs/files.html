@@ -2,6 +2,7 @@
 	<table class="table">
 		<thead>
 			<tr>
+				<th>&nbsp;</th>
 				<th>Name</th>
 				<th>Coverage</th>
 				<th>Issues</th>
@@ -9,8 +10,9 @@
 		</thead>
 		<tbody>
 			<tr *ngFor="#file of files">
+				<td><i class="fa fa-folder-open" *ngIf="file.dir === true"></i></td>
 				<td>{{file.path}}</td>
-				<td>{{file.coverage}}</td>
+				<td>{{file.coverage / 100 | percent}}</td>
 				<td>{{file.issuesNo}}</td>
 			</tr>
 		</tbody>

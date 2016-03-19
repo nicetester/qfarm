@@ -13,25 +13,25 @@
   </div>
 
   <div [class.hidden]="!events['in-progress']" class="text-center linters">
-    <span class="badge linter-badge" [class.done]="events['aligncheck-done']">Aligncheck</span>
-	<span class="badge linter-badge" [class.done]="events['deadcode-done']">Deadcode</span>
-	<span class="badge linter-badge" [class.done]="events['dupl-done']">Dupl</span>
-	<span class="badge linter-badge" [class.done]="events['errcheck-done']">Errcheck</span>
-	<span class="badge linter-badge" [class.done]="events['goconst-done']">Goconst</span>
-	<span class="badge linter-badge" [class.done]="events['gocyclo-done']">Gocyclo</span>
-	<span class="badge linter-badge" [class.done]="events['gofmt-done']">Gofmt</span>
-	<span class="badge linter-badge" [class.done]="events['goimports-done']">Goimports</span>
-	<span class="badge linter-badge" [class.done]="events['golint-done']">Golint</span>
-	<span class="badge linter-badge" [class.done]="events['gotype-done']">Gotype</span>
-	<span class="badge linter-badge" [class.done]="events['ineffassign-done']">Ineffassign</span>
-	<span class="badge linter-badge" [class.done]="events['interfacer-done']">Interfacer</span>
-	<span class="badge linter-badge" [class.done]="events['lll-done']">Lll</span>
-	<span class="badge linter-badge" [class.done]="events['structcheck-done']">Structcheck</span>
-	<span class="badge linter-badge" [class.done]="events['test-done']">Test</span>
-	<span class="badge linter-badge" [class.done]="events['testify-done']">Testify</span>
-	<span class="badge linter-badge" [class.done]="events['varcheck-done']">Varcheck</span>
-	<span class="badge linter-badge" [class.done]="events['vet-done']">Vet</span>
-	<span class="badge linter-badge" [class.done]="events['vetshadow-done']">Vetshadow</span>
-	<span class="badge linter-badge" [class.done]="events['unconvert-done']">Unconvert</span>
-	<span class="badge linter-badge" [class.done]="events['coverage-done']">Coverage</span>
+    <span class="badge linter-badge" [class.active]="events['aligncheck-done']">Aligncheck</span>
+	<span class="badge linter-badge" [class.active]="events['deadcode-done']">Deadcode</span>
+	<span class="badge linter-badge" [class.active]="events['dupl-done']">Dupl</span>
+	<span class="badge linter-badge" [class.active]="events['errcheck-done']">Errcheck</span>
+	<span class="badge linter-badge" [class.active]="events['goconst-done']">Goconst</span>
+	<span class="badge linter-badge" [class.active]="events['gocyclo-done']">Gocyclo</span>
+	<span class="badge linter-badge" [class.active]="events['gofmt-done']">Gofmt</span>
+	<span class="badge linter-badge" [class.active]="events['goimports-done']">Goimports</span>
+	<span class="badge linter-badge" [class.active]="events['golint-done']">Golint</span>
+	<span class="badge linter-badge" [class.active]="events['gotype-done']">Gotype</span>
+	<span class="badge linter-badge" [class.active]="events['ineffassign-done']">Ineffassign</span>
+	<span class="badge linter-badge" [class.active]="events['interfacer-done']">Interfacer</span>
+	<span class="badge linter-badge" [class.active]="events['lll-done']">Lll</span>
+	<span class="badge linter-badge" [class.active]="events['structcheck-done']">Structcheck</span>
+	<span class="badge linter-badge" [class.active]="events['test-done']">Test</span>
+	<span class="badge linter-badge" [class.active]="events['testify-done']">Testify</span>
+	<span class="badge linter-badge" [class.active]="events['varcheck-done']">Varcheck</span>
+	<span class="badge linter-badge" [class.active]="events['vet-done']">Vet</span>
+	<span class="badge linter-badge" [class.active]="events['vetshadow-done']">Vetshadow</span>
+	<span class="badge linter-badge" [class.active]="events['unconvert-done']">Unconvert</span>
+	<span class="badge linter-badge" [class.active]="events['coverage-done']">Coverage</span>
   </div>
