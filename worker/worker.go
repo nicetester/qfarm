@@ -140,7 +140,7 @@ func (w *Worker) analyze(repo string) error {
 	}
 
 	// run coverage
-	if err := w.coverage.Start(*buildCfg); err != nil {
+	if err := w.coverage.Start(*buildCfg, ft); err != nil {
 		return err
 	}
 

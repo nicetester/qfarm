@@ -77,8 +77,8 @@ type CoverFileReport struct {
 type CoverBlock struct {
 	Start   Cursor `json:"start"`
 	End     Cursor `json:"end"`
-	NumStmt int    `json:"numStmt"`
-	Count   int    `json:"count"`
+	NumStmt int64  `json:"numStmt"`
+	Count   int64  `json:"count"`
 }
 
 // Cursor points at specific location in file and is used by CoverBlock.
@@ -90,8 +90,8 @@ type Cursor struct {
 // Node represents a node in directory tree. It might be a file or a directory.
 type Node struct {
 	Path       string   `json:"path"`
-	Nodes      []Node  `json:"nodes"`
-	ParentPath string    `json:"parent"`
+	Nodes      []Node   `json:"nodes"`
+	ParentPath string   `json:"parent"`
 	Dir        bool     `json:"dir"`
 	Coverage   float64  `json:"coverage"`
 	TestsNo    int      `json:"testsNo"`
@@ -115,7 +115,7 @@ type Linter struct {
 	MessageOverride  string   `json:"message_override,omitempty"`
 	EventType        string
 
-	Regex            *regexp.Regexp
+	Regex *regexp.Regexp
 }
 
 // MarshalJSON marshals struct to JSON.
@@ -177,4 +177,3 @@ func (i *Issue) String() string {
 	}
 	return fmt.Sprintf("%s:%d:%s:%s: %s (%s)", strings.TrimSpace(i.Path), i.Line, col, i.Severity, strings.TrimSpace(i.Message), i.Linter)
 }
-
