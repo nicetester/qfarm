@@ -24,10 +24,17 @@ export class AddRepo {
 
         this._websocketService.socket().subscribe(
             event => {
-                if (this.events && this.repoName === event.repo) {
+                if (this.events['in-progress'] && this.repoName === event.repo) {
                     if (event.type === 'all-done') {
                         this.goToBuild(event.repo, event.payload);
                     }
+
+                    if (event.type === 'error') {
+                        this.events['error'] = true;
+                        console.log(event.description);
+                        delete this.events['in-progress'];
+                    }
+                    
                     if (linterEvent.test(event.type)) {
                         this.events[event.type] = true;
                     }
