@@ -22,10 +22,6 @@ export class App {
     name = 'Quality Farm';
 
     constructor(private _websocketService : WebSocketService) {
-        this._websocketService.init();
-        this._websocketService.socket.subscribe((data) => {
-            console.log(data);
-        });
     }
 
 }
