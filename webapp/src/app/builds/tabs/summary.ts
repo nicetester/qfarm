@@ -28,7 +28,7 @@ export class SummaryTab {
     }
 
     showScoreChart() {
-        new Highcharts.Chart(document.getElementById('build-score-widget'), {
+        new Highcharts.Chart(document.getElementById('score-chart'), {
             chart: {
                 type: 'gauge',
                 plotBackgroundColor: null,
@@ -37,9 +37,7 @@ export class SummaryTab {
                 plotShadow: false
             },
 
-            title: {
-                text: 'Quality Score'
-            },
+            title: null,
 
             pane: {
                 startAngle: -90,

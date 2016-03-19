@@ -240,6 +240,59 @@ func (s *Service) RepoIssues(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// RepoFiles returns list of specified repo issues.
+func (s *Service) RepoFiles(w http.ResponseWriter, req *http.Request) {
+	repo := req.URL.Query().Get("repo")
+	if repo == "" {
+		writeErrJSON(w, errors.New("Repo should be set!"), http.StatusBadRequest)
+		return
+	}
+
+	var err error
+	var buildNoInt int
+	buildNo := req.URL.Query().Get("no")
+	if buildNo == "" {
+		buildNoInt, err = s.getLastBuildNo(repo)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusInternalServerError)
+			return
+		}
+	} else {
+		buildNoInt, err = strconv.Atoi(buildNo)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusBadRequest)
+			return
+		}
+	}
+
+	keys, err := s.r.Keys(fmt.Sprintf("files:%s:%d:*", repo, buildNoInt))
+	if err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	nodes := make([]qfarm.Node, 0)
+	for _, k := range keys {
+		data, err := s.r.Get(k)
+		if err != nil {
+			writeErrJSON(w, err, http.StatusInternalServerError)
+			return
+		}
+		var node qfarm.Node
+		if err := json.Unmarshal(data, &node); err != nil {
+			writeErrJSON(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		nodes = append(nodes, node)
+	}
+
+	if err := writeJSON(w, nodes); err != nil {
+		writeErrJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+}
+
 // writeErrJSON wraps error in JSON structure.
 func writeErrJSON(w http.ResponseWriter, err error, status int) {
 	log.Print(err.Error())
