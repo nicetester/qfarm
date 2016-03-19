@@ -13,34 +13,20 @@
     float: left;
     margin: 0 5px;
 }
-
-.score-widget {
-    background: rgb(200,200,200);
-}
-.score-widget .score {
-    font-size: 3rem;
+.widget .title {
+    font-size: 2rem;
+    line-height: 3rem;
     font-weight: bold;
 }
-.score-widget.good {
-    background-color: #AEFFA0;
-    color: #4C8C26;
-}
-.score-widget.average {
-    background-color: #FFF4A0;
-    color: #B5A518;
-}
-.score-widget.bad {
-    background-color: #FFA0A0;
-    color: #E00000;
+
+.score-widget #score-chart {
+    width: 100%;
+    height: 85%;
 }
 
 .tests-widget {
     font-size: 3rem;
     line-height: 10rem;
-}
-.tests-widget .title {
-    font-size: 1.5rem;
-    line-height: 1.5rem;
 }
 .tests-widget .test-details {
     font-size: 1.2rem;
