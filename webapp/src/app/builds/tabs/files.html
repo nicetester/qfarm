@@ -1,1 +1,18 @@
-files tab
+<section class="files-panel">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Coverage</th>
+				<th>Issues</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="#file of files">
+				<td>{{file.path}}</td>
+				<td>{{file.coverage}}</td>
+				<td>{{file.issuesNo}}</td>
+			</tr>
+		</tbody>
+	</table>
+</section>

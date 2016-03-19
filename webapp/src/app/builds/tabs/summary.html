@@ -23,4 +23,25 @@
             <div class="total">Total: {{summary.testsNo}}</div>
         </div>
     </div>
+
+    <div class="widget debt-widget">
+        <div class="title">
+            Technical Debt
+        </div>
+        <div class="monetary-debt">
+            <i class="fa fa-clock-o"></i>&nbsp;{{summary.technicalDeptTime}}
+        </div>
+        <div class="time-debt">
+            <i class="fa fa-usd"></i>&nbsp;{{summary.technicalDeptCost}}
+        </div>
+    </div>
+
+    <div class="widget linters-widget">
+        <div class="title">
+            Linters
+        </div>
+        <div class="badge linter-badge" *ngFor="#l of lintersList" [class.inactive]="!l.ran">
+            {{l.name}}
+        </div>
+    </div>
 </div>

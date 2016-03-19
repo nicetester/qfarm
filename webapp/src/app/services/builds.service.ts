@@ -1,5 +1,5 @@
 import { Injectable } from 'angular2/core';
-import { Http } from 'angular2/http';
+import { Http, URLSearchParams } from 'angular2/http';
 import * as Rx from 'rxjs';
 
 import { Build } from './Build'
@@ -32,7 +32,11 @@ export class BuildsService {
     }
 
     getBuildSummary(repoName: string, buildId: string) {
-        return this.http.get(this.host + 'reports/?repo=github.com/qfarm/bad-go-code/cover');
+        let params = new URLSearchParams();
+        params.set('repo', repoName);
+        params.set('no', buildId);
+
+        return this.http.get(this.host + 'reports/', { search: params });
     }
 
 }

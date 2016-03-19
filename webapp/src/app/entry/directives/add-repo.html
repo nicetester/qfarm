@@ -1,8 +1,34 @@
 <div>
-    <input type="text" [(ngModel)]="repoName" class="reponame-input" (keyup.enter)="startBuild()" />
+  <input type="text" [(ngModel)]="repoName" class="reponame-input" (keyup.enter)="startBuild()" />
 
-    <div class="trigger-button" (click)="startBuild()">
-        Go
-    </div>
+  <div class="trigger-button" (click)="startBuild()">
+    Go
+    <i [class.hidden]="!events['in-progress']" class="fa fa-cog fa-spin"></i>
+  </div>
+
+  <br/>
+  <div [class.hidden]="!events['in-progress']" class="text-center linters">
+    <span [class.done]="events['aligncheck-done']">Aligncheck</span>
+	<span [class.done]="events['deadcode-done']">Deadcode</span>
+	<span [class.done]="events['dupl-done']">Dupl</span>
+	<span [class.done]="events['errcheck-done']">Errcheck</span>
+	<span [class.done]="events['goconst-done']">Goconst</span>
+	<span [class.done]="events['gocyclo-done']">Gocyclo</span>
+	<span [class.done]="events['gofmt-done']">Gofmt</span>
+	<span [class.done]="events['goimports-done']">Goimports</span>
+	<span [class.done]="events['golint-done']">Golint</span>
+	<span [class.done]="events['gotype-done']">Gotype</span>
+	<span [class.done]="events['ineffassign-done']">Ineffassign</span>
+	<span [class.done]="events['interfacer-done']">Interfacer</span>
+	<span [class.done]="events['lll-done']">Lll</span>
+	<span [class.done]="events['structcheck-done']">Structcheck</span>
+	<span [class.done]="events['test-done']">Test</span>
+	<span [class.done]="events['testify-done']">Testify</span>
+	<span [class.done]="events['varcheck-done']">Varcheck</span>
+	<span [class.done]="events['vet-done']">Vet</span>
+	<span [class.done]="events['vetshadow-done']">Vetshadow</span>
+	<span [class.done]="events['unconvert-done']">Unconvert</span>
+	<span [class.done]="events['coverage-done']">Coverage</span>
+  </div>
 
 </div>

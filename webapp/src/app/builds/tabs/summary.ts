@@ -1,5 +1,4 @@
-import { Component, SimpleChange } from 'angular2/core';
-import { Input } from 'angular2/core'
+import { Component, SimpleChange, Input } from 'angular2/core'
 
 declare var Highcharts:any;
 
@@ -12,18 +11,21 @@ export class SummaryTab {
 
     @Input('summary') summary;
     scoreLevel: string;
+    lintersList: [];
 
     constructor() {}
 
     ngOnInit() {
         if (this.summary.score) {
             this.showScoreChart();
+            this.checkLintersList();
         }
     }
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
         if (changes['summary'].currentValue && changes['summary'].currentValue['score']) {
             this.showScoreChart();
+            this.checkLintersList();
         }
     }
 
@@ -107,6 +109,21 @@ export class SummaryTab {
               }]
             }]
           });
+    }
+
+    checkLintersList() {
+        var all = ['aligncheck', 'deadcode', 'dupl', 'errcheck', 'goconst', 'gocyclo', 'gofmt', 'goimports', 'golint', 'gotype', 'ineffassign', 'interfacer', 'lll', 'structcheck', 'test', 'testify', 'varcheck', 'vet', 'vetshadow', 'unconvert', 'coverage'];
+        var ran = this.summary.config.linters;
+        var res = [];
+
+        for(var l of all) {
+            res.push({
+                name: l,
+                ran: ran.indexOf(l) !== -1
+            });
+        }
+
+        this.lintersList = res;
     }
 
 }

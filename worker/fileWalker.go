@@ -121,6 +121,7 @@ func (t *FilesMap) ApplyCover(r *qfarm.CoverageReport) error {
 				path := filepath.Join(p.Name, f)
 				if strings.HasSuffix(k, path) {
 					t.FilesMap[k].Coverage = v.Coverage
+					t.FilesMap[k].Blocks = v.Blocks[:]
 					break
 				}
 			}
