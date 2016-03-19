@@ -31,10 +31,16 @@ export class BuildsService {
         return this.http.get(this.host + 'last_repo_builds/?repo=' + repoName);
     }
 
+    getLastBuilds() {
+        return this.http.get(this.host + 'last_builds/');
+    }
+
     getBuildSummary(repoName: string, buildId: string) {
         let params = new URLSearchParams();
         params.set('repo', repoName);
-        params.set('no', buildId);
+        if (buildId != null) {
+            params.set('no', buildId);
+        }
 
         return this.http.get(this.host + 'reports/', { search: params });
     }
