@@ -225,8 +225,6 @@ func (c *CoverageChecker) runCoverageAnalysis(cfg qfarm.BuildCfg) (*qfarm.Covera
 		report.Failed = true
 	}
 
-	// TODO: store report in redis here!
-
 	return &report, nil
 }
 

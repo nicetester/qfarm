@@ -177,3 +177,23 @@ func (i *Issue) String() string {
 	}
 	return fmt.Sprintf("%s:%d:%s:%s: %s (%s)", strings.TrimSpace(i.Path), i.Line, col, i.Severity, strings.TrimSpace(i.Message), i.Linter)
 }
+
+// Reports stores information about whole analysis.
+type Report struct {
+	Repo       string   `json:"repo"`
+	No         int      `json:"no"`
+	Score      int      `json:"score"`
+	Took       string   `json:"took"`
+	CommitHash string   `json:"commitHash"`
+	Config     BuildCfg `json:"config"`
+
+	Coverage          float64 `json:"coverage"`
+	TestsNo           int     `json:"testsNo"`
+	FailedNo          int     `json:"failedNo"`
+	PassedNo          int     `json:"passedNo"`
+	IssuesNo          int     `json:"issuesNo"`
+	ErrorsNo          int     `json:"errorsNo"`
+	WarningsNo        int     `json:"warningsNo"`
+	TechnicalDeptCost int     `json:"technicalDeptCost"`
+	TechnicalDeptTime string  `json:"technicalDeptTime"`
+}

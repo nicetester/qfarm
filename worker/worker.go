@@ -62,6 +62,8 @@ func (w *Worker) fetchAndAnalyze(data interface{}) error {
 }
 
 func (w *Worker) analyze(repo string) error {
+	start := time.Now()
+
 	// download repo
 	if err := w.download(repo); err != nil {
 		return err
@@ -144,12 +146,74 @@ func (w *Worker) analyze(repo string) error {
 		return err
 	}
 
-	// generate report
+	root, ok := ft.FilesMap[ft.Root]
+	if !ok {
+		return fmt.Errorf("Can't find root!")
+	}
 
-	w.notifier.SendEvent(repo, "All tasks done!", EventTypeAllDone)
+	// generate report
+	r := qfarm.Report{
+		Repo:              newBuild.Repo,
+		No:                newBuild.No,
+		Score:             calculateScore(root),
+		Took:              time.Now().Sub(start).String(),
+		CommitHash:        newBuild.CommitHash,
+		Config:            newBuild.Config,
+		Coverage:          root.Coverage,
+		TestsNo:           root.TestsNo,
+		FailedNo:          root.FailedNo,
+		PassedNo:          root.PassedNo,
+		IssuesNo:          root.IssuesNo,
+		ErrorsNo:          root.ErrorsNo,
+		WarningsNo:        root.WarningsNo,
+		TechnicalDeptCost: root.WarningsNo*10 + root.ErrorsNo*14,
+		TechnicalDeptTime: (time.Duration(root.ErrorsNo*20)*time.Minute + time.Duration(root.WarningsNo*15)*time.Minute).String(),
+	}
+
+	// store report in redis
+	rData, err := json.Marshal(r)
+	if err != nil {
+		return err
+	}
+
+	if err := w.redis.Set(fmt.Sprintf("report:%s:%d", newBuild.Repo, newBuild.No), -1, rData); err != nil {
+		return err
+	}
+
+	w.notifier.SendEventWithPayload(repo, "All tasks done!", EventTypeAllDone, fmt.Sprintf("%d", newBuild.No))
 
 	fmt.Printf("All done\n")
 	return nil
+}
+
+const (
+	CostOfWarning = 10
+	CostOfError   = 14
+
+	FixTimeOfWarning = 15
+	FixTimeOfError   = 20
+)
+
+func calculateScore(n *qfarm.Node) int {
+	// max penalty for coverage is 50%
+	coveragePenalty := int(0.5 * (float64(100) - n.Coverage))
+
+	// calculate issues penalty
+	issuesPenalty := int(float64(n.ErrorsNo)*0.3 + float64(n.WarningsNo)*0.15)
+
+	// normalize output
+	if issuesPenalty > 50 {
+		issuesPenalty = 50
+	}
+
+	// calculate score
+	score := 100 - coveragePenalty - issuesPenalty
+
+	if score < 0 {
+		return 0
+	} else {
+		return score
+	}
 }
 
 func (w *Worker) getLastBuildInfo(repo string) (qfarm.Build, error) {
@@ -197,5 +261,5 @@ func lastCommitHash(repo string) (string, error) {
 		return "", err
 	}
 
-	return string(out), nil
+	return strings.TrimSuffix(string(out), "\n"), nil
 }
