@@ -34,13 +34,23 @@
             <i class="fa fa-usd"></i>&nbsp;{{summary.technicalDeptCost}}
         </div>
     </div>
+    <div class="widget issues-widget">
+        <div class="title">
+            Issues
+        </div>
+      <div class="issues-details">
+        <div class="total">Number of issues: {{summary.issuesNo}}</div>
+        <div class="errors">Number of errors: {{summary.errorsNo}}</div>
+        <div class="warnings">Number of warnings: {{summary.warningsNo}}</div>
+      </div>
+    </div>
 
     <div class="widget linters-widget">
         <div class="title">
             Linters
         </div>
         <div class="badge linter-badge" *ngFor="#l of lintersList" [class.active]="l.ran">
-            {{l.name}}
+            <a target="_blank" href="{{l.link}}">{{l.name}}</a>
         </div>
     </div>
 </div>

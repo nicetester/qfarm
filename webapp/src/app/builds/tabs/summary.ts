@@ -110,14 +110,37 @@ export class SummaryTab {
     }
 
     checkLintersList() {
-        var all = ['aligncheck', 'deadcode', 'dupl', 'errcheck', 'goconst', 'gocyclo', 'gofmt', 'goimports', 'golint', 'gotype', 'ineffassign', 'interfacer', 'lll', 'structcheck', 'test', 'testify', 'varcheck', 'vet', 'vetshadow', 'unconvert', 'coverage'];
+        var all = {
+          'aligncheck': 'http://github.com/opennota/check',
+          'deadcode': 'http://github.com/remyoudompheng/go-misc/tree/master/deadcode',
+          'dupl': 'http://github.com/mibk/dupl',
+          'errcheck': 'http://github.com/alecthomas/errcheck',
+          'goconst': 'http://github.com/jgautheron/goconst',
+          'gocyclo': 'http://github.com/alecthomas/gocyclo',
+          'gofmt': 'http://golang.org/cmd/gofmt',
+          'goimports': 'http://golang.org/x/tools/cmd/goimports',
+          'golint': 'http://github.com/golang/lint/golint',
+          'gotype': 'http://golang.org/x/tools/cmd/gotype',
+          'ineffassign': 'http://github.com/gordonklaus/ineffassign',
+          'interfacer': 'http://github.com/mvdan/interfacer',
+          'lll': 'http://github.com/walle/lll',
+          'structcheck': 'http://github.com/opennota/check',
+          'test': 'http://golang.org/pkg/testing/',
+          'testify': 'http://github.com/stretchr/testify',
+          'varcheck': 'http://github.com/opennota/check',
+          'vet': 'http://golang.org/cmd/vet',
+          'vetshadow': 'http://golang.org/cmd/vet/#hdr-Shadowed_variables',
+          'unconvert': 'http://github.com/mdempsky/unconvert',
+          'coverage': 'http://godoc.org/golang.org/x/tools/cmd/cover'
+        };
         var ran = this.summary.config.linters;
         var res = [];
 
-        for(var l of all) {
+        for(var key in all) {
             res.push({
-                name: l,
-                ran: ran.indexOf(l) !== -1
+                name: key,
+                link: all[key],
+                ran: ran.indexOf(key) !== -1
             });
         }
 
