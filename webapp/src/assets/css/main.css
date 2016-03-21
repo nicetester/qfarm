@@ -5,7 +5,12 @@
     margin: 4px;
 }
 
-.linter-badge.active {
+.linter-badge a {
+    text-decoration: none;
+    color: grey;
+}
+
+.linter-badge.active, .linter-badge.active a {
     background-color: green;
     color: white;
 }

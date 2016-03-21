@@ -1,5 +1,5 @@
 .dashboard {
-    width: 960px;
+    width: 1160px;
     margin: 20px auto;
 }
 
@@ -49,5 +49,18 @@
     margin-top: 10px;
     height: auto;
     padding-bottom: 5px;
-    width: 740px;
+    width: 990px;
 }
+.issues-details {
+  padding-top: 50px;
+}
+.issues-widget .total {
+  color: black;
+}
+.issues-widget .errors {
+  color: red;
+}
+.issues-widget .warnings {
+  color: orange;
+}
+
