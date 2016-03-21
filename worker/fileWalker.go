@@ -100,7 +100,7 @@ func (t *FilesMap) ApplyIssue(i *qfarm.Issue) error {
 			}
 			t.FilesMap[key] = val
 		} else {
-			log.Printf("WARNING: Can't find %s key in FilesMap", val)
+			log.Printf("WARNING: Can't find %s key in FilesMap", key)
 		}
 	}
 

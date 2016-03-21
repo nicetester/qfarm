@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/qfarm/qfarm"
+	"log"
 )
 
 type CoverageChecker struct {
@@ -24,7 +25,7 @@ func NewCoverageChecker(cfg *Cfg, notifier *Notifier) *CoverageChecker {
 }
 
 func (c *CoverageChecker) Start(cfg qfarm.BuildCfg, ft *FilesMap) error {
-	report, err := c.runCoverageAnalysis(cfg)
+	report, err := c.RunCoverageAnalysis(cfg)
 	if err != nil {
 		c.notifier.SendEvent(cfg.Repo, fmt.Sprintf("Coverage error in repo %s", cfg.Repo), EventTypeCoverageErr)
 	}
@@ -38,7 +39,7 @@ func (c *CoverageChecker) Start(cfg qfarm.BuildCfg, ft *FilesMap) error {
 	return nil
 }
 
-func (c *CoverageChecker) runCoverageAnalysis(cfg qfarm.BuildCfg) (*qfarm.CoverageReport, error) {
+func (c *CoverageChecker) RunCoverageAnalysis(cfg qfarm.BuildCfg) (*qfarm.CoverageReport, error) {
 	packages := make([]qfarm.PackageReport, 0)
 
 	// list all packages
@@ -64,11 +65,14 @@ func (c *CoverageChecker) runCoverageAnalysis(cfg qfarm.BuildCfg) (*qfarm.Covera
 		var stdErr bytes.Buffer
 		cmd.Stderr = &stdErr
 
+		testOut := ""
 		out, err := cmd.Output()
 		if err != nil {
 			warning("Some tests in package %s failed", pac.Name)
+			testOut = stdErr.String()
+		} else {
+			testOut = string(out)
 		}
-		testOut := string(out)
 		packages[i].Time = time.Now().Sub(start)
 
 		if strings.Contains(testOut, "[no test files]") {
@@ -227,6 +231,6 @@ func (c *CoverageChecker) runCoverageAnalysis(cfg qfarm.BuildCfg) (*qfarm.Covera
 
 func (m *CoverageChecker) debug(format string, args ...interface{}) {
 	if m.cfg.Debug {
-		fmt.Fprintf(os.Stderr, "DEBUG: "+format+"\n", args...)
+		log.Printf("DEBUG: "+format, args...)
 	}
 }

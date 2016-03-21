@@ -171,7 +171,7 @@ func (m *Metalinter) Start(cfg qfarm.BuildCfg, buildNo int, ft *FilesMap) error 
 	issues, errch := m.runLinters(linters, cfg.Repo, paths, m.cfg.Concurrency, cfg.IncludeTests)
 
 	for issue := range issues {
-		if strings.HasSuffix(issue.Path, ".gen.go") || strings.HasSuffix(issue.Path, ".pb.go") {
+		if strings.HasSuffix(issue.Path, ".gen.go") || strings.HasSuffix(issue.Path, ".pb.go") || strings.Contains(issue.Path, ".git") || strings.Contains(issue.Path, ".idea") || strings.Contains(issue.Path, "vendor") || strings.Contains(issue.Path, "Godeps") {
 			continue
 		}
 
