@@ -113,23 +113,7 @@ func (w *Worker) analyze(repo string) error {
 	if err != nil {
 		return err
 	}
-
-	// marshal build info
 	newBuild.Config = *buildCfg
-	data, err := json.Marshal(newBuild)
-	if err != nil {
-		return err
-	}
-
-	// add new build to global list of all builds
-	if err := w.redis.ListPush("all-builds", data); err != nil {
-		return err
-	}
-
-	// add new build to list of builds per repo
-	if err := w.redis.ListPush("builds:"+repo, data); err != nil {
-		return err
-	}
 
 	// generate directory structure
 	ft, err := BuildTree(buildCfg.Path)
@@ -161,6 +145,7 @@ func (w *Worker) analyze(repo string) error {
 		Repo:              newBuild.Repo,
 		No:                newBuild.No,
 		Score:             calculateScore(root),
+		Time:              qfarm.JSONTime(start),
 		Took:              time.Now().Sub(start).String(),
 		CommitHash:        newBuild.CommitHash,
 		Config:            newBuild.Config,
@@ -178,6 +163,16 @@ func (w *Worker) analyze(repo string) error {
 	// store report in redis
 	rData, err := json.Marshal(r)
 	if err != nil {
+		return err
+	}
+
+	// add new build to global list of all builds
+	if err := w.redis.ListPush("all-builds", rData); err != nil {
+		return err
+	}
+
+	// add new build to list of builds per repo
+	if err := w.redis.ListPush("builds:"+repo, rData); err != nil {
 		return err
 	}
 
@@ -250,8 +245,8 @@ func (w *Worker) storeNodes(repo string, no int, ft *FilesMap) error {
 	return nil
 }
 
-func (w *Worker) getLastBuildInfo(repo string) (qfarm.Build, error) {
-	var build qfarm.Build
+func (w *Worker) getLastBuildInfo(repo string) (qfarm.Report, error) {
+	var build qfarm.Report
 	data, err := w.redis.ListGetLast("builds:" + repo)
 	if err != nil {
 		return build, err

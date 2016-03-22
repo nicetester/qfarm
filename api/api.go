@@ -53,9 +53,9 @@ func (s *Service) LastBuilds(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	lastBuilds := make([]qfarm.Build, 0)
+	lastBuilds := make([]qfarm.Report, 0)
 	for _, b := range builds {
-		var single qfarm.Build
+		var single qfarm.Report
 		if err := json.Unmarshal(b, &single); err != nil {
 			writeErrJSON(w, err, http.StatusInternalServerError)
 			return
@@ -88,9 +88,9 @@ func (s *Service) LastRepoBuilds(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	lastBuilds := make([]qfarm.Build, 0)
+	lastBuilds := make([]qfarm.Report, 0)
 	for _, b := range builds {
-		var single qfarm.Build
+		var single qfarm.Report
 		if err := json.Unmarshal(b, &single); err != nil {
 			writeErrJSON(w, err, http.StatusInternalServerError)
 			return

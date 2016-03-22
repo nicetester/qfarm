@@ -187,12 +187,13 @@ func (i *Issue) String() string {
 
 // Reports stores information about whole analysis.
 type Report struct {
-	Repo       string   `json:"repo"`
-	No         int      `json:"no"`
-	Score      int      `json:"score"`
-	Took       string   `json:"took"`
-	CommitHash string   `json:"commitHash"`
-	Config     BuildCfg `json:"config"`
+	Repo       string    `json:"repo"`
+	No         int       `json:"no"`
+	Score      int       `json:"score"`
+	Time       JSONTime  `json:"time"`
+	Took       string    `json:"took"`
+	CommitHash string    `json:"commitHash"`
+	Config     BuildCfg  `json:"config"`
 
 	Coverage          float64 `json:"coverage"`
 	TestsNo           int     `json:"testsNo"`
@@ -203,4 +204,34 @@ type Report struct {
 	WarningsNo        int     `json:"warningsNo"`
 	TechnicalDeptCost int     `json:"technicalDeptCost"`
 	TechnicalDeptTime string  `json:"technicalDeptTime"`
+}
+
+const defaultDateFormat = "2006-01-02 15:04:05"
+
+type JSONTime time.Time
+
+func (t JSONTime) MarshalJSON() ([]byte, error) {
+	return []byte(time.Time(t).Format(`"` + defaultDateFormat + `"`)), nil
+}
+
+func (t *JSONTime) UnmarshalJSON(data []byte) error {
+	val, err := time.Parse(`"`+defaultDateFormat+`"`, string(data))
+	if err != nil {
+		return err
+	}
+
+	*t = JSONTime(val)
+	return nil
+}
+
+func (t *JSONTime) Time() time.Time {
+	return time.Time(*t)
+}
+
+func (t *JSONTime) String() string {
+	if t == nil {
+		return ""
+	}
+
+	return time.Time(*t).Format(defaultDateFormat)
 }

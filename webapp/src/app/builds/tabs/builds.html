@@ -4,6 +4,11 @@
     <thead>
     <tr>
       <th>Builds</th>
+      <th>Time</th>
+      <th>Duration</th>
+      <th>Coverage</th>
+      <th>Issues</th>
+      <th>Score</th>
     </tr>
     </thead>
     <tbody>
@@ -12,6 +17,21 @@
         <a href="{{ b.link }}">
           <i class="fa fa-github"></i>&nbsp;{{b.no}}#&nbsp;{{b.repo}}
         </a>
+      </td>
+      <td>
+        {{b.time}}
+      </td>
+      <td>
+        {{b.took}}
+      </td>
+      <td>
+        {{b.coverage.toFixed(2)}}
+      </td>
+      <td>
+        {{b.issuesNo}}
+      </td>
+      <td>
+        {{b.score}}
       </td>
     </tr>
     </tbody>

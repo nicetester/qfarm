@@ -133,6 +133,7 @@ export class SummaryTab {
           'unconvert': 'http://github.com/mdempsky/unconvert',
           'coverage': 'http://godoc.org/golang.org/x/tools/cmd/cover'
         };
+
         var ran = this.summary.config.linters;
         var res = [];
 
