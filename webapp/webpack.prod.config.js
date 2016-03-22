@@ -124,7 +124,7 @@ module.exports = {
       // Tslint loader support for *.ts files
       //
       // See: https://github.com/wbuchwalter/tslint-loader
-      {test: /\.ts$/, loader: 'tslint-loader', exclude: [helpers.root('node_modules')]},
+//      {test: /\.ts$/, loader: 'tslint-loader', exclude: [helpers.root('node_modules')]},
 
       // Source map loader support for *.js files
       // Extracts SourceMaps for source files that as added as sourceMappingURL comment.
@@ -266,7 +266,7 @@ module.exports = {
     // NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
     new UglifyJsPlugin({
       // beautify: true, //debug
-      // mangle: false, //debug
+       mangle: false, //debug
       // dead_code: false, //debug
       // unused: false, //debug
       // deadCode: false, //debug
@@ -282,7 +282,8 @@ module.exports = {
       beautify: false,//prod
 
       // mangle: { screw_ie8 : true }, //prod
-      mangle: {
+/*
+        mangle: {
         screw_ie8: true,
         except: [
           'App',
@@ -334,6 +335,7 @@ module.exports = {
           'I18nSelectPipe'
         ] // Needed for uglify RouterLink problem
       }, // prod
+ */
       compress: {screw_ie8: true}, //prod
       comments: false //prod
     }),

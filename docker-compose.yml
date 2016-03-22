@@ -14,6 +14,11 @@ server:
     - redis:redis
   ports:
     - "8080:8080"
+webapp:
+  build: .
+  dockerfile: Dockerfile-webapp
+  ports:
+    - "9000:9000"
 websocket:
   build: .
   dockerfile: Dockerfile-ws
