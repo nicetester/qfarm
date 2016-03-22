@@ -20,11 +20,13 @@ import { Config } from './config/config';
     { path: '/',      name: 'Entry', component: Entry, useAsDefault: true },
     { path: '/build/:repoName/', component: Build, name: 'Last Build' },
     { path: '/build/:repoName/:buildId/', component: Build, name: 'Build' },
-    { path: '/build/:repoName/:buildId/:file/', component: Build, name: 'Build - File View' }
+    { path: '/build/:repoName/:buildId/:file/', component: Build, name: 'Build - File View' },
     { path: '/config', component: Config, name: 'Config - Get QFarm Configuration' }
 ])
 export class App {
     name = 'Quality Farm';
+    buildsList: any;
+    userRepos: any;
 
     user : string;
 
