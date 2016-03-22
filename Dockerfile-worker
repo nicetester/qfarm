@@ -1,4 +1,4 @@
-FROM viru/gometalinters:latest
+FROM qfarm/gometalinters:latest
 
 ADD . /go/src/github.com/qfarm/qfarm
 
