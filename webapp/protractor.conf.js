@@ -1,13 +1,8 @@
-// @AngularClass
-require('ts-node/register');
-
 exports.config = {
-  baseUrl: 'http://localhost:3000/',
+  baseUrl: 'http://localhost:8080/',
 
-  // use `npm run e2e`
   specs: [
-    'src/**/**.e2e.ts',
-    'src/**/*.e2e.ts'
+    'src/**/*.e2e.js'
   ],
   exclude: [],
 
@@ -25,17 +20,17 @@ exports.config = {
   directConnect: true,
 
   capabilities: {
-    'browserName': 'chrome',
-    'chromeOptions': {
-      'args': ['show-fps-counter=true']
-    }
+    'browserName': 'chrome'
   },
 
-  onPrepare: function() {
+  onPrepare: function () {
+    var SpecReporter = require('jasmine-spec-reporter');
+    // add jasmine spec reporter
+    jasmine.getEnv().addReporter(new SpecReporter({displayStacktrace: true}));
+
     browser.ignoreSynchronization = true;
   },
 
-  seleniumServerJar: "node_modules/protractor/selenium/selenium-server-standalone-2.48.2.jar",
 
   /**
    * Angular 2 configuration
@@ -44,5 +39,5 @@ exports.config = {
    * `rootEl`
    *
    */
-   useAllAngular2AppRoots: true
+  useAllAngular2AppRoots: true
 };

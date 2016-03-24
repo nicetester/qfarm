@@ -1,47 +1,55 @@
-// @AngularClass
+var path = require('path');
+var webpackConfig = require('./webpack.config');
 
-module.exports = function(config) {
-  var testWebpackConfig = require('./webpack.test.config.js');
+module.exports = function (config) {
+  var _config = {
 
-  config.set({
-
-    // base path that will be used to resolve all patterns (e.g. files, exclude)
+    // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['jasmine'],
 
-    // list of files to exclude
-    exclude: [ ],
-
     // list of files / patterns to load in the browser
-    // we are building the test environment in ./spec-bundle.js
-    files: [ { pattern: 'spec-bundle.js', watched: false } ],
+    files: [
+      {pattern: './karma-shim.js', watched: false},
+      {pattern: './src/app/**/*.spec.ts', watched: true, included: false}
+    ],
+
+    // list of files to exclude
+    exclude: [],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: { 'spec-bundle.js': ['coverage', 'webpack', 'sourcemap'] },
+    preprocessors: {
+      './karma-shim.js': ['webpack', 'sourcemap']
+    },
 
-    // Webpack Config at ./webpack.test.config.js
-    webpack: testWebpackConfig,
+    webpack: webpackConfig,
+
+    webpackMiddleware: {
+      // webpack-dev-middleware configuration
+      // i. e.
+      stats: 'errors-only'
+    },
 
     coverageReporter: {
-      dir : 'coverage/',
+      dir: 'coverage/',
       reporters: [
-        { type: 'text-summary' },
-        { type: 'json' },
-        { type: 'html' }
+        {type: 'text-summary'},
+        {type: 'html'}
       ]
     },
 
-    // Webpack please don't spam the console when running in karma!
-    webpackServer: { noInfo: true },
+    webpackServer: {
+      noInfo: true // please don't spam the console when running in karma!
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'mocha', 'coverage' ],
+    reporters: ['progress', 'coverage'],
 
     // web server port
     port: 9876,
@@ -58,14 +66,13 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: [
-      // 'Chrome',
-      'PhantomJS'
-    ],
+    browsers: ['PhantomJS'], // you can also use Chrome
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: true
-  });
+  };
+
+  config.set(_config);
 
 };

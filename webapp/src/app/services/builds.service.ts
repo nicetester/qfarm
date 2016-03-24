@@ -2,14 +2,14 @@ import { Injectable } from 'angular2/core';
 import { Http, URLSearchParams } from 'angular2/http';
 import * as Rx from 'rxjs';
 
-import { Build } from './Build'
+import { Build } from './Build';
 
 @Injectable()
 export class BuildsService {
 
     host = 'http://docker:8080/';
 
-    constructor(private http: Http){}
+    constructor(private http: Http) {}
 
     getAllBuilds() {
         return Rx.Observable.fromPromise(Promise.resolve([
@@ -18,7 +18,6 @@ export class BuildsService {
             new Build(2, 'userA/repoX'),
             new Build(1, 'userA/repoX')
         ]));
-
     }
 
     startNewBuild(repoName: string) {

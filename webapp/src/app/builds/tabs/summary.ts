@@ -1,6 +1,6 @@
-import { Component, SimpleChange, Input } from 'angular2/core'
+import { Component, SimpleChange, Input } from 'angular2/core';
 
-declare var Highcharts:any;
+declare var Highcharts: any;
 
 @Component({
     selector: 'summary-tab',
@@ -78,7 +78,7 @@ export class SummaryTab {
 
             plotOptions: {
               solidgauge: {
-                borderWidth: '15px',
+                  borderWidth: '15px',
                 dataLabels: {
                   enabled: false
                 },

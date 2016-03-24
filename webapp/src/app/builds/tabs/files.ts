@@ -1,5 +1,5 @@
 import { Component, SimpleChange } from 'angular2/core';
-import { EventEmitter, Input, Output } from 'angular2/core'
+import { EventEmitter, Input, Output } from 'angular2/core';
 import { Router } from 'angular2/router';
 
 import { FilesService } from '../../services/files.service';
@@ -21,7 +21,7 @@ export class FilesTab {
 
 
     constructor(private _router: Router,
-                private _filesService: FilesService){}
+                private _filesService: FilesService) {}
 
 	ngOnInit() {
       if (this.summary.repo && this.summary.no) {
@@ -71,7 +71,8 @@ export class FilesTab {
 
     getLineIssues(lineNo) {
         var issues = [];
-        console.log(this.file.issues);
+        this.file.issues = this.file.issues || [];
+
         for (var i of this.file.issues) {
             console.log(lineNo, i.line);
             if (i.line === lineNo) {
@@ -79,7 +80,7 @@ export class FilesTab {
             }
         }
         console.log('issues', issues);
-        return issues;
+        return issues || [];
     }
 
 }
