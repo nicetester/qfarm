@@ -1,10 +1,10 @@
-import { Component } from 'angular2/core'
+import { Component } from 'angular2/core';
 import { Router, RouteParams } from 'angular2/router';
 
-import { SummaryTab } from './tabs/summary'
-import { IssuesTab } from './tabs/issues'
-import { FilesTab } from './tabs/files'
-import { BuildsTab } from './tabs/builds'
+import { SummaryTab } from './tabs/summary';
+import { IssuesTab } from './tabs/issues';
+import { FilesTab } from './tabs/files';
+import { BuildsTab } from './tabs/builds';
 
 import { BuildsService } from '../services/builds.service';
 
@@ -19,7 +19,7 @@ export class Build {
 
     repoName: string;
     buildId: string = '';
-    tab: string = "summary"
+    tab: string = "summary";
 
     summary: any = {};
     file: string;

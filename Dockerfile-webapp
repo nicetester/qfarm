@@ -1,6 +1,6 @@
 FROM qfarm/webapp
 
-ADD webapp /webapp
+ADD webapp_old /webapp
 
 RUN cd /webapp && \
     npm install && \

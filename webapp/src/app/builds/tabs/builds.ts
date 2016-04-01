@@ -1,4 +1,4 @@
-import { Component, SimpleChange, Input } from 'angular2/core'
+import { Component, SimpleChange, Input } from 'angular2/core';
 
 import { BuildsService } from '../../services/builds.service';
 
@@ -32,11 +32,11 @@ export class BuildsTab {
       .map(res => res.json())
       .subscribe(
         (buildsList) => {
-          console.log(buildsList)
-          for(var key in buildsList) {
-            buildsList[key].link = '#/build/' + buildsList[key].repo.replace(/\//g, ':') + '/' + buildsList[key].no;
-          }
-          this.buildsList = buildsList
+            console.log(buildsList);
+            for(var key in buildsList) {
+                buildsList[key].link = '#/build/' + buildsList[key].repo.replace(/\//g, ':') + '/' + buildsList[key].no;
+            }
+            this.buildsList = buildsList;
         },
         (err) => console.error('err', err));
   }

@@ -1,30 +1,33 @@
 import {Component} from 'angular2/core';
-import {RouteConfig, Router} from 'angular2/router';
+import {Router, RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
+
 import {BuildsService} from './services/builds.service';
 import {WebSocketService} from './services/websocket.service';
 import {UserService} from './services/user.service';
 
-import { Entry } from './entry/entry';
-import { Build } from './builds/build';
-import { Config } from './config/config';
+import {Home} from './home/home';
+import {Build} from './builds/build';
+import {Config} from './config/config';
+
+import '../style/app.scss';
 
 @Component({
     selector: 'app',
-    pipes: [ ],
+    directives: [...ROUTER_DIRECTIVES],
     providers: [ BuildsService, WebSocketService, UserService ],
-    directives: [ ],
-    styles: [require('./app.css')],
+    styles: [require('./app.scss')],
     template: require('./app.html')
 })
 @RouteConfig([
-    { path: '/',      name: 'Entry', component: Entry, useAsDefault: true },
+    { path: '/', name: 'Home', component: Home, useAsDefault: true},
     { path: '/build/:repoName/', component: Build, name: 'Last Build' },
     { path: '/build/:repoName/:buildId/', component: Build, name: 'Build' },
     { path: '/build/:repoName/:buildId/:file/', component: Build, name: 'Build - File View' },
     { path: '/config', component: Config, name: 'Config - Get QFarm Configuration' }
 ])
 export class App {
-    name = 'Quality Farm';
+
+        name = 'Quality Farm';
     buildsList: any;
     userRepos: any;
 
@@ -58,8 +61,8 @@ export class App {
                             repo: b.repo,
                             no: b.no,
                             link: '#/build/' + b.repo.replace(/\//g, ':') + '/' + b.no
-                        }
-                    }).sort((a,b) => b.no - a.no);
+                        };
+                    }).sort((a, b) => b.no - a.no);
                 },
                 (err) => console.error('err', err));
     }
@@ -73,10 +76,11 @@ export class App {
                         return {
                             repo: r,
                             link: '#/build/' + r.replace(/\//g, ':') + '/'
-                        }
+                        };
                     });
                 },
                 (err) => console.error('err', err));
     }
+
 
 }

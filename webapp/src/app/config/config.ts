@@ -5,8 +5,4 @@ import { Component } from 'angular2/core';
   template: require('./config.html'),
   styles: [require('./config.css')],
 })
-export class Config {
-
-  constructor(){}
-
-}
+export class Config {}

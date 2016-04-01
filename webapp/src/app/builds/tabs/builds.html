@@ -25,7 +25,7 @@
         {{b.took}}
       </td>
       <td>
-        {{b.coverage.toFixed(2)}}
+        {{ b.coverage ? b.coverage.toFixed(2) : '-'}}
       </td>
       <td>
         {{b.issuesNo}}

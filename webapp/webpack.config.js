@@ -1,263 +1,305 @@
-/**
- * @author: @AngularClass
- */
-
+// Helper: root(), and rootDir() are defined at the bottom
+var path = require('path');
 var webpack = require('webpack');
-var helpers = require('./helpers');
 
-/**
- * Webpack Plugins
- */
-var CopyWebpackPlugin = require('copy-webpack-plugin');
+// Webpack Plugins
+var CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
+var autoprefixer = require('autoprefixer');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
+var ProvidePlugin = require('webpack/lib/ProvidePlugin');
 
 /**
- * Webpack Constants
+ * Env
+ * Get npm lifecycle event to identify the environment
  */
-const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
-const HMR = helpers.hasProcessFlag('hot');
-const METADATA = {
-  title: 'Quality Farm',
-  baseUrl: '/',
-  host: 'localhost',
-  port: 3000,
-  ENV: ENV,
-  HMR: HMR
-};
+var ENV = process.env.npm_lifecycle_event;
+var isTest = ENV === 'test' || ENV === 'test-watch';
+var isProd = ENV === 'build';
 
-/**
- * Webpack configuration
- *
- * See: http://webpack.github.io/docs/configuration.html#cli
- */
-module.exports = {
+module.exports = function makeWebpackConfig() {
+  /**
+   * Config
+   * Reference: http://webpack.github.io/docs/configuration.html
+   * This is the object where all configuration gets set
+   */
+  var config = {};
 
-  // Static metadata for index.html
-  //
-  // See: (custom attribute)
-  metadata: METADATA,
-
-  // Switch loaders to debug mode.
-  //
-  // See: http://webpack.github.io/docs/configuration.html#debug
-  debug: true,
-
-  // Developer tool to enhance debugging
-  //
-  // See: http://webpack.github.io/docs/configuration.html#devtool
-  // See: https://github.com/webpack/docs/wiki/build-performance#sourcemaps
-  devtool: 'cheap-module-eval-source-map',
-
-  // Cache generated modules and chunks to improve performance for multiple incremental builds.
-  // This is enabled by default in watch mode.
-  // You can pass false to disable it.
-  //
-  // See: http://webpack.github.io/docs/configuration.html#cache
-  // cache: false,
-
-  // The entry point for the bundle
-  // Our Angular.js app
-  //
-  // See: http://webpack.github.io/docs/configuration.html#entry
-  entry: {
-
-    'polyfills': './src/polyfills.ts',
-    'vendor': './src/vendor.ts',
-    'main': './src/main.ts'
-
-  },
-
-  // Options affecting the resolving of modules.
-  //
-  // See: http://webpack.github.io/docs/configuration.html#resolve
-  resolve: {
-
-    // An array of extensions that should be used to resolve modules.
-    //
-    // See: http://webpack.github.io/docs/configuration.html#resolve-extensions
-    extensions: ['', '.ts', '.js']
-
-  },
-
-  // Options affecting the output of the compilation.
-  //
-  // See: http://webpack.github.io/docs/configuration.html#output
-  output: {
-
-    // The output directory as absolute path (required).
-    //
-    // See: http://webpack.github.io/docs/configuration.html#output-path
-    path: helpers.root('dist'),
-
-    // Specifies the name of each output file on disk.
-    // IMPORTANT: You must not specify an absolute path here!
-    //
-    // See: http://webpack.github.io/docs/configuration.html#output-filename
-    filename: '[name].bundle.js',
-
-    // The filename of the SourceMaps for the JavaScript files.
-    // They are inside the output.path directory.
-    //
-    // See: http://webpack.github.io/docs/configuration.html#output-sourcemapfilename
-    sourceMapFilename: '[name].map',
-
-    // The filename of non-entry chunks as relative path
-    // inside the output.path directory.
-    //
-    // See: http://webpack.github.io/docs/configuration.html#output-chunkfilename
-    chunkFilename: '[id].chunk.js'
-
-  },
-
-  // Options affecting the normal modules.
-  //
-  // See: http://webpack.github.io/docs/configuration.html#module
-  module: {
-
-    // An array of applied pre and post loaders.
-    //
-    // See: http://webpack.github.io/docs/configuration.html#module-preloaders-module-postloaders
-    preLoaders: [
-
-      // Tslint loader support for *.ts files
-      //
-      // See: https://github.com/wbuchwalter/tslint-loader
-      // { test: /\.ts$/, loader: 'tslint-loader', exclude: [ helpers.root('node_modules') ] },
-
-      // Source map loader support for *.js files
-      // Extracts SourceMaps for source files that as added as sourceMappingURL comment.
-      //
-      // See: https://github.com/webpack/source-map-loader
-      {test: /\.js$/, loader: 'source-map-loader', exclude: [helpers.root('node_modules/rxjs')]}
-
-    ],
-
-    // An array of automatically applied loaders.
-    //
-    // IMPORTANT: The loaders here are resolved relative to the resource which they are applied to.
-    // This means they are not resolved relative to the configuration file.
-    //
-    // See: http://webpack.github.io/docs/configuration.html#module-loaders
-    loaders: [
-
-      // Typescript loader support for .ts and Angular 2 async routes via .async.ts
-      //
-      // See: https://github.com/s-panferov/awesome-typescript-loader
-      {test: /\.ts$/, loader: 'awesome-typescript-loader', exclude: [/\.(spec|e2e)\.ts$/]},
-
-      // Json loader support for *.json files.
-      //
-      // See: https://github.com/webpack/json-loader
-      {test: /\.json$/, loader: 'json-loader'},
-
-      // Raw loader support for *.css files
-      // Returns file content as string
-      //
-      // See: https://github.com/webpack/raw-loader
-      {test: /\.css$/, loader: 'raw-loader'},
-
-      // Raw loader support for *.html
-      // Returns file content as string
-      //
-      // See: https://github.com/webpack/raw-loader
-      {test: /\.html$/, loader: 'raw-loader', exclude: [helpers.root('src/index.html')]}
-
-    ]
-
-  },
-
-  // Add additional plugins to the compiler.
-  //
-  // See: http://webpack.github.io/docs/configuration.html#plugins
-  plugins: [
-
-    // Plugin: ForkCheckerPlugin
-    // Description: Do type checking in a separate process, so webpack don't need to wait.
-    //
-    // See: https://github.com/s-panferov/awesome-typescript-loader#forkchecker-boolean-defaultfalse
-    new ForkCheckerPlugin(),
-
-    // Plugin: OccurenceOrderPlugin
-    // Description: Varies the distribution of the ids to get the smallest id length
-    // for often used ids.
-    //
-    // See: https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
-    // See: https://github.com/webpack/docs/wiki/optimization#minimize
-    new webpack.optimize.OccurenceOrderPlugin(true),
-
-    // Plugin: CommonsChunkPlugin
-    // Description: Shares common code between the pages.
-    // It identifies common modules and put them into a commons chunk.
-    //
-    // See: https://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin
-    // See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
-    new webpack.optimize.CommonsChunkPlugin({name: ['main', 'vendor', 'polyfills'], minChunks: Infinity}),
-
-    // Plugin: CopyWebpackPlugin
-    // Description: Copy files and directories in webpack.
-    //
-    // Copies project static assets.
-    //
-    // See: https://www.npmjs.com/package/copy-webpack-plugin
-    new CopyWebpackPlugin([{from: 'src/assets', to: 'assets'}]),
-
-    // Plugin: HtmlWebpackPlugin
-    // Description: Simplifies creation of HTML files to serve your webpack bundles.
-    // This is especially useful for webpack bundles that include a hash in the filename
-    // which changes every compilation.
-    //
-    // See: https://github.com/ampedandwired/html-webpack-plugin
-    new HtmlWebpackPlugin({template: 'src/index.html', chunksSortMode: 'none'}),
-
-    // Plugin: DefinePlugin
-    // Description: Define free variables.
-    // Useful for having development builds with debug logging or adding global constants.
-    //
-    // Environment helpers
-    //
-    // See: https://webpack.github.io/docs/list-of-plugins.html#defineplugin
-    // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
-    new webpack.DefinePlugin({'ENV': JSON.stringify(METADATA.ENV), 'HMR': HMR})
-
-  ],
-
-  // Static analysis linter for TypeScript advanced options configuration
-  // Description: An extensible linter for the TypeScript language.
-  //
-  // See: https://github.com/wbuchwalter/tslint-loader
-  tslint: {
-    emitErrors: false,
-    failOnHint: false,
-    resourcePath: 'src'
-  },
-
-  // Webpack Development Server configuration
-  // Description: The webpack-dev-server is a little node.js Express server.
-  // The server emits information about the compilation state to the client,
-  // which reacts to those events.
-  //
-  // See: https://webpack.github.io/docs/webpack-dev-server.html
-  devServer: {
-    port: METADATA.port,
-    host: METADATA.host,
-    historyApiFallback: true,
-    watchOptions: {
-      aggregateTimeout: 300,
-      poll: 1000
-    }
-  },
-
-  // Include polyfills or mocks for various node stuff
-  // Description: Node configuration
-  //
-  // See: https://webpack.github.io/docs/configuration.html#node
-  node: {
-    global: 'window',
-    process: true,
-    crypto: 'empty',
-    module: false,
-    clearImmediate: false,
-    setImmediate: false
+  /**
+   * Devtool
+   * Reference: http://webpack.github.io/docs/configuration.html#devtool
+   * Type of sourcemap to use per build type
+   */
+  if (isTest) {
+    config.devtool = 'inline-source-map';
+  } else if (isProd) {
+    config.devtool = 'source-map';
+  } else {
+    config.devtool = 'eval-source-map';
   }
-};
+
+  // add debug messages
+  config.debug = !isProd || !isTest;
+
+  /**
+   * Entry
+   * Reference: http://webpack.github.io/docs/configuration.html#entry
+   */
+  config.entry = isTest ? {} : {
+    'vendor': './src/vendor.ts',
+    'app': './src/bootstrap.ts' // our angular app
+  };
+
+  /**
+   * Output
+   * Reference: http://webpack.github.io/docs/configuration.html#output
+   */
+  config.output = isTest ? {} : {
+    path: root('dist'),
+    publicPath: '/',
+    filename: isProd ? 'js/[name].[hash].js' : 'js/[name].js',
+    chunkFilename: isProd ? '[id].[hash].chunk.js' : '[id].chunk.js'
+  };
+
+  /**
+   * Resolve
+   * Reference: http://webpack.github.io/docs/configuration.html#resolve
+   */
+  config.resolve = {
+    cache: !isTest,
+    root: root(),
+    // only discover files that have those extensions
+    extensions: ['', '.ts', '.js', '.json', '.css', '.scss', '.html'],
+    alias: {
+      'app': 'src/app',
+      'common': 'src/common'
+    }
+  };
+
+  /**
+   * Loaders
+   * Reference: http://webpack.github.io/docs/configuration.html#module-loaders
+   * List: http://webpack.github.io/docs/list-of-loaders.html
+   * This handles most of the magic responsible for converting modules
+   */
+  config.module = {
+    preLoaders: isTest ? [] : [{test: /\.ts$/, loader: 'tslint'}],
+    loaders: [
+      // Support for .ts files.
+      {
+        test: /\.ts$/,
+        loader: 'ts',
+        query: {
+          'ignoreDiagnostics': [
+            2403, // 2403 -> Subsequent variable declarations
+            2300, // 2300 -> Duplicate identifier
+            2374, // 2374 -> Duplicate number index signature
+            2375, // 2375 -> Duplicate string index signature
+            2502  // 2502 -> Referenced directly or indirectly
+          ]
+        },
+        exclude: [isTest ? /\.(e2e)\.ts$/ : /\.(spec|e2e)\.ts$/, /node_modules\/(?!(ng2-.+))/]
+      },
+
+      // copy those assets to output
+        {test: /\.(png|jpe?g|gif|svg|ico)$/, loader: 'file?name=[path][name].[ext]?[hash]'},
+
+        { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
+        { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" },
+
+      // Support for *.json files.
+      {test: /\.json$/, loader: 'json'},
+
+      // Support for CSS as raw text
+      // use 'null' loader in test mode (https://github.com/webpack/null-loader)
+      // all css in src/style will be bundled in an external css file
+      {
+        test: /\.css$/,
+        exclude: root('src', 'app'),
+        loader: isTest ? 'null' : ExtractTextPlugin.extract('style', 'css?sourceMap!postcss')
+      },
+      // all css required in src/app files will be merged in js files
+      {test: /\.css$/, include: root('src', 'app'), loader: 'raw!postcss'},
+
+      // support for .scss files
+      // use 'null' loader in test mode (https://github.com/webpack/null-loader)
+      // all css in src/style will be bundled in an external css file
+      {
+        test: /\.scss$/,
+        exclude: root('src', 'app'),
+        loader: isTest ? 'null' : ExtractTextPlugin.extract('style', 'css?sourceMap!postcss!sass')
+      },
+      // all css required in src/app files will be merged in js files
+      {test: /\.scss$/, exclude: root('src', 'style'), loader: 'raw!postcss!sass'},
+
+      // support for .html as raw text
+      // todo: change the loader to something that adds a hash to images
+      {test: /\.html$/, loader: 'raw'}
+    ],
+    postLoaders: [],
+    noParse: [/.+zone\.js\/dist\/.+/, /.+angular2\/bundles\/.+/, /angular2-polyfills\.js/]
+  };
+
+  if (isTest) {
+    // instrument only testing sources with Istanbul, covers js compiled files for now :-/
+    config.module.postLoaders.push({
+      test: /\.(js|ts)$/,
+      include: path.resolve('src'),
+      loader: 'istanbul-instrumenter-loader',
+      exclude: [/\.spec\.ts$/, /\.e2e\.ts$/, /node_modules/]
+    })
+  }
+
+  /**
+   * Plugins
+   * Reference: http://webpack.github.io/docs/configuration.html#plugins
+   * List: http://webpack.github.io/docs/list-of-plugins.html
+   */
+  config.plugins = [
+    // Define env variables to help with builds
+    // Reference: https://webpack.github.io/docs/list-of-plugins.html#defineplugin
+    new webpack.DefinePlugin({
+      // Environment helpers
+      'process.env': {
+        ENV: JSON.stringify(ENV)
+      }
+    })
+  ];
+
+
+  if (!isTest) {
+    config.plugins.push(
+      // Generate common chunks if necessary
+      // Reference: https://webpack.github.io/docs/code-splitting.html
+      // Reference: https://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin
+      new CommonsChunkPlugin({
+        name: 'vendor',
+        filename: isProd ? 'js/[name].[hash].js' : 'js/[name].js',
+        minChunks: Infinity
+      }),
+      new CommonsChunkPlugin({
+        name: 'common',
+        filename: isProd ? 'js/[name].[hash].js' : 'js/[name].js',
+        minChunks: 2,
+        chunks: ['app', 'vendor']
+      }),
+
+      // Inject script and link tags into html files
+      // Reference: https://github.com/ampedandwired/html-webpack-plugin
+      new HtmlWebpackPlugin({
+        template: './src/public/index.html',
+        inject: 'body',
+        chunksSortMode: function compare(a, b) {
+          // common always first
+          if (a.names[0] === 'common') {
+            return -1;
+          }
+          // app always last
+          if (a.names[0] === 'app') {
+            return 1;
+          }
+          // vendor before app
+          if (a.names[0] === 'vendor' && b.names[0] === 'app') {
+            return -1;
+          } else {
+            return 1;
+          }
+          // a must be equal to b
+          return 0;
+        }
+      }),
+
+      // Extract css files
+      // Reference: https://github.com/webpack/extract-text-webpack-plugin
+      // Disabled when in test mode or not in build mode
+      new ExtractTextPlugin('css/[name].[hash].css', {disable: !isProd}),
+
+      new ProvidePlugin({
+          jQuery: 'jquery',
+          $: 'jquery',
+          jquery: 'jquery'
+      })
+    );
+  }
+
+  // Add build specific plugins
+  if (isProd) {
+    config.plugins.push(
+      // Reference: http://webpack.github.io/docs/list-of-plugins.html#noerrorsplugin
+      // Only emit files when there are no errors
+      new webpack.NoErrorsPlugin(),
+
+      // Reference: http://webpack.github.io/docs/list-of-plugins.html#dedupeplugin
+      // Dedupe modules in the output
+      new webpack.optimize.DedupePlugin(),
+
+      // Reference: http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
+      // Minify all javascript, switch loaders to minimizing mode
+      new webpack.optimize.UglifyJsPlugin({
+        // Angular 2 is broken again, disabling mangle until beta 6 that should fix the thing
+        // Todo: remove this with beta 6
+        mangle: false
+      }),
+
+      // Copy assets from the public folder
+      // Reference: https://github.com/kevlened/copy-webpack-plugin
+      new CopyWebpackPlugin([{
+        from: root('src/public')
+      }])
+    );
+  }
+
+  /**
+   * PostCSS
+   * Reference: https://github.com/postcss/autoprefixer-core
+   * Add vendor prefixes to your css
+   */
+  config.postcss = [
+    autoprefixer({
+      browsers: ['last 2 version']
+    })
+  ];
+
+  /**
+   * Sass
+   * Reference: https://github.com/jtangelder/sass-loader
+   * Transforms .scss files to .css
+   */
+  config.sassLoader = {
+    //includePaths: [path.resolve(__dirname, "node_modules/foundation-sites/scss")]
+  };
+
+  /**
+   * Apply the tslint loader as pre/postLoader
+   * Reference: https://github.com/wbuchwalter/tslint-loader
+   */
+  config.tslint = {
+    emitErrors: false,
+    failOnHint: false
+  };
+
+  /**
+   * Dev server configuration
+   * Reference: http://webpack.github.io/docs/configuration.html#devserver
+   * Reference: http://webpack.github.io/docs/webpack-dev-server.html
+   */
+  config.devServer = {
+    contentBase: './src/public',
+    historyApiFallback: true,
+    stats: 'minimal' // none (or false), errors-only, minimal, normal (or true) and verbose
+  };
+
+  return config;
+}();
+
+// Helper functions
+function root(args) {
+  args = Array.prototype.slice.call(arguments, 0);
+  return path.join.apply(path, [__dirname].concat(args));
+}
+
+function rootNode(args) {
+  args = Array.prototype.slice.call(arguments, 0);
+  return root.apply(path, ['node_modules'].concat(args));
+}
